@@ -3,7 +3,9 @@ require "tilt"
 module Sass
   module Sprockets
     class SassTemplate < Tilt::SassTemplate
-      attr_reader :scope
+      
+      # A reference to the current Sprockets context
+      attr_reader :context
       
       # Define the expected syntax for the template
       def syntax
@@ -11,13 +13,13 @@ module Sass
       end
       
       def prepare
-        @scope  = nil
-        @output = nil
+        @context = nil
+        @output  = nil
       end
       
-      def evaluate(scope, locals, &block)
+      def evaluate(context, locals, &block)
         @output ||= begin
-          @scope = scope
+          @context = context
           Sass::Engine.new(data, sass_options).render
         end
       end
@@ -26,18 +28,15 @@ module Sass
       
       def sass_options
         options.merge(
-          :filename            => eval_file,
-          :line                => line,
-          :syntax              => syntax,
-          :load_paths          => load_paths,
-          :filesystem_importer => Importer
+          :filename => eval_file,
+          :line     => line,
+          :syntax   => syntax,
+          :importer => importer
         )
       end
       
-      def load_paths
-        load_paths = (options[:load_paths] || []).dup
-        load_paths.unshift(*scope.environment.paths) if scope.respond_to? :environment
-        load_paths
+      def importer
+        Sass::Sprockets::Importer.new context
       end
     end
   end

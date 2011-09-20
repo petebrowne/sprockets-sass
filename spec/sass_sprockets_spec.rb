@@ -28,7 +28,7 @@ describe Sass::Sprockets do
     asset.dependencies.should == [ @env["posts.css.sass"] ]
   end
   
-  it "finds imported files" do
+  it "finds imports standard files" do
     @assets.file "application.css.scss", '@import "posts"'
     @assets.file "posts.css.scss", ".post { color: blue; }"
     asset = @env["application.css.scss"]
