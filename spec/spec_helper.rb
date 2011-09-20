@@ -1,6 +1,5 @@
-require "bundler"
-Bundler.require :default, :development
 require "sprockets"
+require "sass-sprockets"
 require "construct"
 
 # Requires supporting files with custom matchers and macros, etc,
