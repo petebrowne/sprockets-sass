@@ -53,7 +53,7 @@ module Sprockets
           context.depend_on logical_path
           ::Sass::Engine.new logical_path.read, options.merge(
             :filename => logical_path.to_s,
-            :syntax   => :scss,
+            :syntax   => syntax(logical_path),
             :importer => self
           )
         end
@@ -74,6 +74,11 @@ module Sprockets
         context.resolve(logical_path, :content_type => :self)
       rescue ::Sprockets::FileNotFound, ::Sprockets::ContentTypeMismatch
         nil
+      end
+      
+      # Returns the Sass syntax of the given path.
+      def syntax(path)
+        path.to_s.include?(".sass") ? :sass : :scss
       end
     end
   end
