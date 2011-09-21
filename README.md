@@ -10,18 +10,12 @@ _Note: This works in Rails 3.1, thanks to the [sass-rails gem](http://github.com
 ### Features
 
 * Imports Sass _partials_ (filenames prepended with "_").
-* Import paths work exactly like `require` directives*.
+* Import paths work exactly like `require` directives.
 * Imports either Sass syntax, or just regular CSS files.
 * Imported files are preprocessed by Sprockets, so `.css.scss.erb` files can be imported.
   Directives from within imported files also work as expected.
 * Standard Sass load paths are not touched, so Compass extensions will work as expected.
-
-_* Glob support coming in 0.2.0_
-
-### TODO
-
-* Glob support (as mentioned above)
-* Asset path helpers
+* Supports glob imports, like sass-rails.
 
 
 Installation
