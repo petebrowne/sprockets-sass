@@ -16,11 +16,6 @@ module Sprockets
       
       # @see Sass::Importers::Base#find_relative
       def find_relative(path, base, options)
-        unless base.to_s.empty?
-          root_path = Pathname.new(context.root_path)
-          base_path = Pathname.new(base).dirname
-          path      = base_path.relative_path_from(root_path).join(path)
-        end
         engine_from_path(path, options)
       end
       

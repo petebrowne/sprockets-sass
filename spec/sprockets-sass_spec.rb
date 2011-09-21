@@ -47,6 +47,13 @@ describe Sprockets::Sass do
     asset.to_s.should == "body {\n  color: blue; }\n"
   end
   
+  it "imports files relative to root" do
+    @assets.file "folder/main.css.scss", '@import "dep"'
+    @assets.file "dep.css.scss", "body { color: blue; }"
+    asset = @env["folder/main.css.scss"]
+    asset.to_s.should == "body {\n  color: blue; }\n"
+  end
+  
   it "imports files from the assets load path" do
     vendor = @root.directory "vendor"
     @env.append_path vendor.to_s
