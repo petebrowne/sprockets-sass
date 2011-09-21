@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.email       = ["me@petebrowne.com"]
   s.homepage    = "http://github.com/petebrowne/sprockets-sass"
   s.summary     = %q{Better Sass integration with Sprockets 2.0}
-  s.description = %q{Sprockets::Sass is a gem that fixes @import when used within Sprockets + Sass projects.}
+  s.description = %q{When using Sprockets 2.0 with Sass you will eventually run into a pretty big issue. `//= require` directives will not allow Sass mixins, variables, etc. to be shared between files. So you'll try to use `@import`, and that'll also blow up in your face. `sprockets-sass` fixes all of this by creating a Sass::Importer that is Sprockets aware.}
 
   s.rubyforge_project = "sprockets-sass"
 

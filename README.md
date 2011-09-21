@@ -1,11 +1,13 @@
-Sprockets::Sass
-===============
+sprockets-sass
+==============
 
-**Sprockets::Sass is a gem that fixes `@import` when used within Sprockets + Sass projects.**
+**Better Sass integration with [Sprockets 2.0](http://github.com/sstephenson/sprockets)**
 
-This is currently fixed in Rails 3.1, when using the [sass-rails gem](https://github.com/rails/sass-rails). But if you want to use Sprockets and Sass anywhere else, like Sinatra, use Sprockets::Sass.
+When using Sprockets 2.0 with Sass you will eventually run into a pretty big issue. `//= require` directives will not allow Sass mixins, variables, etc. to be shared between files. So you'll try to use `@import`, and that'll also blow up in your face. `sprockets-sass` fixes all of this by creating a Sass::Importer that is Sprockets aware.
 
-### `@import` Features
+_Note: This works in Rails 3.1, thanks to the [sass-rails gem](http://github.com/rails/sass-rails). But if you want to use Sprockets and Sass anywhere else, like Sinatra, use `sprockets-sass`._
+
+### Features
 
 * Imports Sass _partials_ (filenames prepended with "_").
 * Import paths work exactly like `require` directives*.
@@ -16,12 +18,19 @@ This is currently fixed in Rails 3.1, when using the [sass-rails gem](https://gi
 
 _* Glob support coming in 0.2.0_
 
+### TODO
+
+* Glob support (as mentioned above)
+* Asset path helpers
+
+
 Installation
 ------------
 
 ``` bash
 $ gem install sprockets-sass
 ```
+
 
 Usage
 -----
@@ -85,6 +94,7 @@ button {
   border-radius: 5px;
   color: red; }
 ```
+
 
 Copyright
 ---------
