@@ -47,6 +47,14 @@ describe Sprockets::Sass do
     asset.to_s.should == "html {\n  height: 100%; }\n\nbody {\n  color: blue; }\n"
   end
   
+  it "imports files with directives" do
+    @assets.file "main.css.scss", %(@import "dep";)
+    @assets.file "dep.css", "/*\n *= require subdep\n */"
+    @assets.file "subdep.css.scss", "$color: blue;\nbody { color: $color; }"
+    asset = @env["main.css.scss"]
+    asset.to_s.should include("body {\n  color: blue; }\n")
+  end
+  
   it "imports files with additional processors" do
     @assets.file "main.css.scss", %(@import "dep";\nbody { color: $color; })
     @assets.file "dep.css.scss.erb", "$color: <%= 'blue' %>;"
