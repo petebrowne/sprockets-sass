@@ -4,6 +4,8 @@ require "pathname"
 module Sprockets
   module Sass
     class Importer < ::Sass::Importers::Base
+      GLOB = /\*|\[.+\]/
+      
       # Reference to the Sprockets context
       attr_reader :context
       
@@ -13,8 +15,12 @@ module Sprockets
       end
       
       # @see Sass::Importers::Base#find_relative
-      def find_relative(path, base, options)
-        engine_from_path(path, options)
+      def find_relative(path, base_path, options)
+        if path =~ GLOB
+          engine_from_glob(path, base_path, options)
+        else
+          engine_from_path(path, options)
+        end
       end
       
       # @see Sass::Importers::Base#find
@@ -45,13 +51,28 @@ module Sprockets
       protected
       
       # Create a Sass::Engine from the given path.
-      # This is where all the magic happens!
       def engine_from_path(path, options)
         pathname = resolve(path) or return nil
         context.depend_on pathname
         ::Sass::Engine.new evaluate(pathname), options.merge(
           :filename => pathname.to_s,
           :syntax   => syntax(pathname),
+          :importer => self
+        )
+      end
+      
+      # Create a Sass::Engine that will handle importing
+      # a glob of files.
+      def engine_from_glob(glob, base_path, options)
+        imports = resolve_glob(glob, base_path).inject("") do |imports, path|
+          context.depend_on path
+          relative_path = path.relative_path_from Pathname.new(context.root_path)
+          imports << %(@import "#{relative_path}";\n)
+        end
+        return nil if imports.empty?
+        ::Sass::Engine.new imports, options.merge(
+          :filename => base_path.to_s,
+          :syntax   => :scss,
           :importer => self
         )
       end
@@ -63,11 +84,21 @@ module Sprockets
         path    = Pathname.new(path) unless path.is_a?(Pathname)
         partial = path.dirname.join("_#{path.basename}")
         
-        resolve_asset(path) || resolve_asset(partial)
+        resolve_path(path) || resolve_path(partial)
+      end
+      
+      # Finds all of the assets using the given glob.
+      def resolve_glob(glob, base_path)
+        base_path      = Pathname.new(base_path)
+        path_with_glob = base_path.dirname.join(glob).to_s
+        
+        Pathname.glob(path_with_glob).sort.select do |path|
+          path != context.pathname && context.asset_requirable?(path)
+        end
       end
       
       # Finds the asset using the context from Sprockets.
-      def resolve_asset(path)
+      def resolve_path(path)
         context.resolve(path, :content_type => :self)
       rescue ::Sprockets::FileNotFound, ::Sprockets::ContentTypeMismatch
         nil
