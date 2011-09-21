@@ -27,29 +27,29 @@ describe Sprockets::Sass do
   end
   
   it "imports standard files" do
-    @assets.file "main.css.scss", '@import "dep"'
-    @assets.file "dep.css.scss", "body { color: blue; }"
+    @assets.file "main.css.scss", %(@import "dep";\nbody { color: $color; })
+    @assets.file "dep.css.scss", "$color: blue;"
     asset = @env["main.css.scss"]
     asset.to_s.should == "body {\n  color: blue; }\n"
   end
   
   it "imports partial style files" do
-    @assets.file "main.css.scss", '@import "dep"'
-    @assets.file "_dep.css.scss", "body { color: blue; }"
+    @assets.file "main.css.scss", %(@import "dep";\nbody { color: $color; })
+    @assets.file "_dep.css.scss", "$color: blue;"
     asset = @env["main.css.scss"]
     asset.to_s.should == "body {\n  color: blue; }\n"
   end
   
   it "imports relative files" do
-    @assets.file "folder/main.css.scss", '@import "./dep"'
-    @assets.file "folder/dep.css.scss", "body { color: blue; }"
+    @assets.file "folder/main.css.scss", %(@import "./dep";\nbody { color: $color; })
+    @assets.file "folder/dep.css.scss", "$color: blue;"
     asset = @env["folder/main.css.scss"]
     asset.to_s.should == "body {\n  color: blue; }\n"
   end
   
   it "imports files relative to root" do
-    @assets.file "folder/main.css.scss", '@import "dep"'
-    @assets.file "dep.css.scss", "body { color: blue; }"
+    @assets.file "folder/main.css.scss", %(@import "dep";\nbody { color: $color; })
+    @assets.file "dep.css.scss", "$color: blue;"
     asset = @env["folder/main.css.scss"]
     asset.to_s.should == "body {\n  color: blue; }\n"
   end
@@ -58,8 +58,8 @@ describe Sprockets::Sass do
     vendor = @root.directory "vendor"
     @env.append_path vendor.to_s
     
-    @assets.file "main.css.scss", '@import "dep"'
-    vendor.file "dep.css.scss", "body { color: blue; }"
+    @assets.file "main.css.scss", %(@import "dep";\nbody { color: $color; })
+    vendor.file "dep.css.scss", "$color: blue;"
     asset = @env["main.css.scss"]
     asset.to_s.should == "body {\n  color: blue; }\n"
   end
@@ -68,21 +68,21 @@ describe Sprockets::Sass do
     vendor = @root.directory "vendor"
     Sass::Engine::DEFAULT_OPTIONS[:load_paths] << vendor.to_s
     
-    @assets.file "main.css.scss", '@import "dep"'
-    vendor.file "dep.scss", "body { color: blue; }"
+    @assets.file "main.css.scss", %(@import "dep";\nbody { color: $color; })
+    vendor.file "dep.scss", "$color: blue;"
     asset = @env["main.css.scss"]
     asset.to_s.should == "body {\n  color: blue; }\n"
   end
 
   it "adds dependency when imported" do
-    @assets.file "main.css.scss", '@import "dep"'
-    dep = @assets.file "dep.css.scss", "body { color: blue; }"
+    @assets.file "main.css.scss", %(@import "dep";\nbody { color: $color; })
+    dep = @assets.file "dep.css.scss", "$color: blue;"
     
     asset = @env["main.css.scss"]
     asset.should be_fresh
     
     mtime = Time.now + 1
-    dep.open("w") { |f| f.write "body { color: red; }" }
+    dep.open("w") { |f| f.write "$color: red;" }
     dep.utime mtime, mtime
     
     asset.should be_stale

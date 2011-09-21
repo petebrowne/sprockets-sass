@@ -51,7 +51,7 @@ module Sprockets
       def engine_from_path(path, options)
         if logical_path = resolve(path)
           context.depend_on logical_path
-          ::Sass::Engine.new context.evaluate(logical_path), options.merge(
+          ::Sass::Engine.new logical_path.read, options.merge(
             :filename => logical_path.to_s,
             :syntax   => :scss,
             :importer => self
