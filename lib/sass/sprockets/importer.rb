@@ -55,7 +55,8 @@ module Sass
       # This is where all the magic happens!
       def engine_from_path(path, options)
         if logical_path = resolve(path)
-          Sass::Engine.new evaluate_asset(logical_path), options.merge(
+          context.depend_on logical_path
+          Sass::Engine.new context.evaluate(logical_path), options.merge(
             :filename => logical_path.to_s,
             :syntax   => :scss,
             :importer => self
@@ -76,13 +77,8 @@ module Sass
       # Finds the asset using the context from Sprockets.
       def resolve_asset(logical_path)
         context.resolve(logical_path, :content_type => :self)
-      rescue Sprockets::FileNotFound, Sprockets::ContentTypeMismatch
+      rescue ::Sprockets::FileNotFound, ::Sprockets::ContentTypeMismatch
         nil
-      end
-      
-      # Evaluates the asset using the context from Sprockets.
-      def evaluate_asset(logical_path)
-        context.evaluate(logical_path)
       end
     end
   end
