@@ -47,6 +47,13 @@ describe Sprockets::Sass do
     asset.to_s.should == "html {\n  height: 100%; }\n\nbody {\n  color: blue; }\n"
   end
   
+  it "imports files with additional processors" do
+    @assets.file "main.css.scss", %(@import "dep";\nbody { color: $color; })
+    @assets.file "dep.css.scss.erb", "$color: <%= 'blue' %>;"
+    asset = @env["main.css.scss"]
+    asset.to_s.should == "body {\n  color: blue; }\n"
+  end
+  
   it "imports relative files" do
     @assets.file "folder/main.css.scss", %(@import "./dep";\nbody { color: $color; })
     @assets.file "folder/dep.css.scss", "$color: blue;"

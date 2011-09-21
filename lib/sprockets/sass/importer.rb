@@ -4,8 +4,6 @@ require "pathname"
 module Sprockets
   module Sass
     class Importer < ::Sass::Importers::Base
-      GLOB = /\*|\[.+\]/
-      
       # Reference to the Sprockets context
       attr_reader :context
       
@@ -26,8 +24,8 @@ module Sprockets
 
       # @see Sass::Importers::Base#mtime
       def mtime(path, options)
-        if logical_path = resolve(path)
-          logical_path.mtime
+        if pathname = resolve(path)
+          pathname.mtime
         end
       rescue Errno::ENOENT
         nil
@@ -49,14 +47,13 @@ module Sprockets
       # Create a Sass::Engine from the given path.
       # This is where all the magic happens!
       def engine_from_path(path, options)
-        if logical_path = resolve(path)
-          context.depend_on logical_path
-          ::Sass::Engine.new logical_path.read, options.merge(
-            :filename => logical_path.to_s,
-            :syntax   => syntax(logical_path),
-            :importer => self
-          )
-        end
+        pathname = resolve(path) or return nil
+        context.depend_on pathname
+        ::Sass::Engine.new evaluate(pathname), options.merge(
+          :filename => pathname.to_s,
+          :syntax   => syntax(pathname),
+          :importer => self
+        )
       end
       
       # Finds an asset from the given path. This is where
@@ -70,8 +67,8 @@ module Sprockets
       end
       
       # Finds the asset using the context from Sprockets.
-      def resolve_asset(logical_path)
-        context.resolve(logical_path, :content_type => :self)
+      def resolve_asset(path)
+        context.resolve(path, :content_type => :self)
       rescue ::Sprockets::FileNotFound, ::Sprockets::ContentTypeMismatch
         nil
       end
@@ -79,6 +76,15 @@ module Sprockets
       # Returns the Sass syntax of the given path.
       def syntax(path)
         path.to_s.include?(".sass") ? :sass : :scss
+      end
+      
+      # Returns the string to be passed to the Sass engine. We use
+      # Sprockets to process the file, but we remove any Sass processors
+      # because we need to let the Sass::Engine handle that.
+      def evaluate(path)
+        processors = context.environment.attributes_for(path).processors.dup
+        processors.delete_if { |processor| processor < Tilt::SassTemplate }
+        context.evaluate path, :processors => processors
       end
     end
   end
