@@ -1,5 +1,5 @@
 require "sprockets"
-require "sass-sprockets"
+require "sprockets-sass"
 require "construct"
 
 # Requires supporting files with custom matchers and macros, etc,

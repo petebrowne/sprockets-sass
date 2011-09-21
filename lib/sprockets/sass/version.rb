@@ -1,5 +1,5 @@
-module Sass
-  module Sprockets
+module Sprockets
+  module Sass
     VERSION = "0.0.1"
   end
 end

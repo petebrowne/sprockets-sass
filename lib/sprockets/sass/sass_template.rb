@@ -1,7 +1,7 @@
 require "tilt"
 
-module Sass
-  module Sprockets
+module Sprockets
+  module Sass
     class SassTemplate < Tilt::SassTemplate
       
       # A reference to the current Sprockets context
@@ -20,7 +20,7 @@ module Sass
       def evaluate(context, locals, &block)
         @output ||= begin
           @context = context
-          Sass::Engine.new(data, sass_options).render
+          ::Sass::Engine.new(data, sass_options).render
         end
       end
 
@@ -36,7 +36,7 @@ module Sass
       end
       
       def importer
-        Sass::Sprockets::Importer.new context
+        Importer.new context
       end
     end
   end

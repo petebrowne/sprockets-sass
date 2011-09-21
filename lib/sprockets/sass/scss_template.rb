@@ -1,5 +1,5 @@
-module Sass
-  module Sprockets
+module Sprockets
+  module Sass
     class ScssTemplate < SassTemplate
       # Define the expected syntax for the template
       def syntax

@@ -1,8 +1,8 @@
 require "sass/importers/base"
 require "pathname"
 
-module Sass
-  module Sprockets
+module Sprockets
+  module Sass
     class Importer < ::Sass::Importers::Base
       GLOB = /\*|\[.+\]/
       
@@ -56,7 +56,7 @@ module Sass
       def engine_from_path(path, options)
         if logical_path = resolve(path)
           context.depend_on logical_path
-          Sass::Engine.new context.evaluate(logical_path), options.merge(
+          ::Sass::Engine.new context.evaluate(logical_path), options.merge(
             :filename => logical_path.to_s,
             :syntax   => :scss,
             :importer => self

@@ -1,17 +1,17 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-require "sass/sprockets/version"
+require "sprockets/sass/version"
 
 Gem::Specification.new do |s|
-  s.name        = "sass-sprockets"
-  s.version     = Sass::Sprockets::VERSION
+  s.name        = "sprockets-sass"
+  s.version     = Sprockets::Sass::VERSION
   s.authors     = ["Pete Browne"]
   s.email       = ["me@petebrowne.com"]
-  s.homepage    = "http://github.com/petebrowne/sass-sprockets"
+  s.homepage    = "http://github.com/petebrowne/sprockets-sass"
   s.summary     = %q{Better Sass integration with Sprockets 2.0}
-  s.description = %q{Sass::Sprockets is a gem that fixes @import when used within Sprockets + Sass projects.}
+  s.description = %q{Sprockets::Sass is a gem that fixes @import when used within Sprockets + Sass projects.}
 
-  s.rubyforge_project = "sass-sprockets"
+  s.rubyforge_project = "sprockets-sass"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")

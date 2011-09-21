@@ -1,13 +1,13 @@
-Sass::Sprockets
+Sprockets::Sass
 ===============
 
-Sass::Sprockets is a gem that fixes `@import` when used within Sprockets + Sass projects.
+Sprockets::Sass is a gem that fixes `@import` when used within Sprockets + Sass projects.
 
 Installation
 ------------
 
 ``` bash
-$ gem install sass-sprockets
+$ gem install sprockets-sass
 ```
 
 Usage

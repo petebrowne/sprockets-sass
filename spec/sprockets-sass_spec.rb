@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe Sass::Sprockets do
+describe Sprockets::Sass do
   before :each do
     @root   = create_construct
     @assets = @root.directory "assets"
