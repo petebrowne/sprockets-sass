@@ -53,7 +53,7 @@ module Sprockets
       # Create a Sass::Engine from the given path.
       def engine_from_path(path, options)
         pathname = resolve(path) or return nil
-        context.depend_on pathname
+        context.depend_on_asset pathname
         ::Sass::Engine.new evaluate(pathname), options.merge(
           :filename => pathname.to_s,
           :syntax   => syntax(pathname),
@@ -65,7 +65,7 @@ module Sprockets
       # a glob of files.
       def engine_from_glob(glob, base_path, options)
         imports = resolve_glob(glob, base_path).inject("") do |imports, path|
-          context.depend_on path
+          context.depend_on_asset path
           relative_path = path.relative_path_from Pathname.new(context.root_path)
           imports << %(@import "#{relative_path}";\n)
         end

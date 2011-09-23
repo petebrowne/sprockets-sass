@@ -118,6 +118,21 @@ describe Sprockets::Sass do
     asset.should be_stale
   end
 
+  it "adds dependencies from assets when imported" do
+    @assets.file "main.css.scss", %(@import "dep1";\nbody { color: $color; })
+    @assets.file "dep1.css.scss", %(@import "dep2";\n)
+    dep = @assets.file "dep2.css.scss", "$color: blue;"
+    
+    asset = @env["main.css.scss"]
+    asset.should be_fresh
+    
+    mtime = Time.now + 1
+    dep.open("w") { |f| f.write "$color: red;" }
+    dep.utime mtime, mtime
+    
+    asset.should be_stale
+  end
+
   it "adds dependencies when imported from a glob" do
     @assets.file "main.css.scss", %(@import "folder/*";\nbody { color: $color; background: $bg-color; })
     @assets.file "folder/dep1.css.scss", "$color: blue;"
