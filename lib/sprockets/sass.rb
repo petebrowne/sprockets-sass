@@ -6,8 +6,8 @@ require "sprockets/engines"
 module Sprockets
   module Sass
     autoload :Importer, "sprockets/sass/importer"
-    
-    ::Sprockets.register_engine ".sass", SassTemplate
-    ::Sprockets.register_engine ".scss", ScssTemplate
   end
+    
+  register_engine ".sass", Sass::SassTemplate
+  register_engine ".scss", Sass::ScssTemplate
 end

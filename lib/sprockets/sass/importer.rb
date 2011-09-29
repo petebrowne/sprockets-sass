@@ -53,7 +53,7 @@ module Sprockets
       # Create a Sass::Engine from the given path.
       def engine_from_path(path, options)
         pathname = resolve(path) or return nil
-        context.depend_on_asset pathname
+        context.depend_on pathname
         ::Sass::Engine.new evaluate(pathname), options.merge(
           :filename => pathname.to_s,
           :syntax   => syntax(pathname),
@@ -65,7 +65,7 @@ module Sprockets
       # a glob of files.
       def engine_from_glob(glob, base_path, options)
         imports = resolve_glob(glob, base_path).inject("") do |imports, path|
-          context.depend_on_asset path
+          context.depend_on path
           relative_path = path.relative_path_from Pathname.new(context.root_path)
           imports << %(@import "#{relative_path}";\n)
         end
@@ -93,13 +93,13 @@ module Sprockets
         path_with_glob = base_path.dirname.join(glob).to_s
         
         Pathname.glob(path_with_glob).sort.select do |path|
-          path != context.pathname && context.asset_requirable?(path)
+          path != context.pathname # && context.asset_requirable?(path)
         end
       end
       
       # Finds the asset using the context from Sprockets.
       def resolve_path(path)
-        context.resolve(path, :content_type => :self)
+        context.resolve path #, :content_type => :self
       rescue ::Sprockets::FileNotFound, ::Sprockets::ContentTypeMismatch
         nil
       end
@@ -115,7 +115,7 @@ module Sprockets
       def evaluate(path)
         processors = context.environment.attributes_for(path).processors.dup
         processors.delete_if { |processor| processor < Tilt::SassTemplate }
-        context.evaluate path, :processors => processors
+        context.evaluate(path, :processors => processors)
       end
     end
   end
