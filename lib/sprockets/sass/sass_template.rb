@@ -3,6 +3,7 @@ require "tilt"
 module Sprockets
   module Sass
     class SassTemplate < Tilt::SassTemplate
+      self.default_mime_type = "text/css"
       
       # A reference to the current Sprockets context
       attr_reader :context

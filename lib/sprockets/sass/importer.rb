@@ -93,13 +93,13 @@ module Sprockets
         path_with_glob = base_path.dirname.join(glob).to_s
         
         Pathname.glob(path_with_glob).sort.select do |path|
-          path != context.pathname # && context.asset_requirable?(path)
+          path != context.pathname && context.asset_requirable?(path)
         end
       end
       
       # Finds the asset using the context from Sprockets.
       def resolve_path(path)
-        context.resolve path #, :content_type => :self
+        context.resolve path, :content_type => :self
       rescue ::Sprockets::FileNotFound, ::Sprockets::ContentTypeMismatch
         nil
       end
