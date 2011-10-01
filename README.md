@@ -14,7 +14,7 @@ _Note: This works in Rails 3.1, thanks to the [sass-rails gem](http://github.com
 * Imports either Sass syntax, or just regular CSS files.
 * Imported files are preprocessed by Sprockets, so `.css.scss.erb` files can be imported.
   Directives from within imported files also work as expected.
-* Standard Sass load paths are not touched, so Compass extensions will work as expected.
+* Automatic integration with Compass.
 * Supports glob imports, like sass-rails.
 
 
@@ -89,6 +89,42 @@ button {
   color: red; }
 ```
 
+
+Compass Integration
+-------------------
+
+As of version 0.3.0, Compass is automatically detected and integrated. All you have to do
+is configure Compass like you normally would:
+
+``` ruby
+require "sprockets"
+require "sprockets-sass"
+require "sass"
+require "compass"
+
+Compass.configuration do |compass|
+  # ...
+end
+
+map "/assets" do
+  environment = Sprockets::Environment.new
+  environment.append_path "assets/stylesheets"
+  run environment
+end
+
+# etc...
+```
+
+The load paths and other options from Compass are automatically used:
+
+``` scss
+// assets/stylesheets/application.css.scss
+@import "compass/css3";
+
+button {
+  @include border-radius(5px);
+}
+```
 
 Copyright
 ---------
