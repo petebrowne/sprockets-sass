@@ -1,6 +1,12 @@
 require "sprockets"
 require "sprockets-sass"
+require "compass"
 require "construct"
+
+Compass.configuration do |compass|
+  compass.line_comments = false
+  compass.output_style  = :nested
+end
 
 # Requires supporting files with custom matchers and macros, etc,
 # in ./support/ and its subdirectories.

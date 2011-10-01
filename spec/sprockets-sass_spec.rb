@@ -94,14 +94,31 @@ describe Sprockets::Sass do
     asset.to_s.should == "body {\n  color: blue; }\n"
   end
   
+  it "allows global Sass configuration" do
+    Sprockets::Sass.options[:style] = :compact
+    @assets.file "main.css.scss", "body {\n  color: blue;\n}"
+    
+    asset = @env["main.css"]
+    asset.to_s.should == "body { color: blue; }\n"
+    Sprockets::Sass.options.delete(:style)
+  end
+  
   it "imports files from the Sass load path" do
     vendor = @root.directory "vendor"
-    Sass::Engine::DEFAULT_OPTIONS[:load_paths] << vendor.to_s
+    Sprockets::Sass.options[:load_paths] = [ vendor.to_s ]
     
     @assets.file "main.css.scss", %(@import "dep";\nbody { color: $color; })
     vendor.file "dep.scss", "$color: blue;"
     asset = @env["main.css"]
     asset.to_s.should == "body {\n  color: blue; }\n"
+    Sprockets::Sass.options.delete(:load_paths)
+  end
+  
+  it "works with the Compass framework" do
+    @assets.file "main.css.scss", %(@import "compass/typography/text/nowrap";\np { @include nowrap; })
+    
+    asset = @env["main.css"]
+    asset.to_s.should == "p {\n  white-space: nowrap; }\n"
   end
   
   it "imports globbed files" do

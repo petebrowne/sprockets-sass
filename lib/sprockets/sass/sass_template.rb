@@ -13,11 +13,13 @@ module Sprockets
         :sass
       end
       
+      # See `Tilt::Template#prepare`.
       def prepare
         @context = nil
         @output  = nil
       end
       
+      # See `Tilt::Template#evaluate`.
       def evaluate(context, locals, &block)
         @output ||= begin
           @context = context
@@ -25,10 +27,16 @@ module Sprockets
         end
       end
 
-      private
+      protected
       
+      # A reference to the custom Sass importer, `Sprockets::Sass::Importer`.
+      def importer
+        Importer.new context
+      end
+      
+      # Assemble the options for the `Sass::Engine`
       def sass_options
-        options.merge(
+        merge_sass_options(default_sass_options, options).merge(
           :filename => eval_file,
           :line     => line,
           :syntax   => syntax,
@@ -36,8 +44,23 @@ module Sprockets
         )
       end
       
-      def importer
-        Importer.new context
+      # Get the default, global Sass options. Start with Compass's
+      # options, if it's available.
+      def default_sass_options
+        if defined?(Compass)
+          merge_sass_options Compass.sass_engine_options.dup, Sprockets::Sass.options
+        else
+          Sprockets::Sass.options.dup
+        end
+      end
+      
+      # Merges two sets of `Sass::Engine` options, prepending
+      # the `:load_paths` instead of clobbering them.
+      def merge_sass_options(options, other_options)
+        if (load_paths = options[:load_paths]) && (other_paths = other_options[:load_paths])
+          other_options[:load_paths] = other_paths + load_paths
+        end
+        options.merge other_options
       end
     end
   end

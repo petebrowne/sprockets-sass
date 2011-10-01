@@ -6,6 +6,11 @@ require "sprockets/engines"
 module Sprockets
   module Sass
     autoload :Importer, "sprockets/sass/importer"
+    
+    # Global configuration for `Sass::Engine` instances.
+    def self.options
+      @options ||= {}
+    end
   end
     
   register_engine ".sass", Sass::SassTemplate
