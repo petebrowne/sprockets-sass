@@ -115,10 +115,10 @@ describe Sprockets::Sass do
   end
   
   it "works with the Compass framework" do
-    @assets.file "main.css.scss", %(@import "compass/typography/text/nowrap";\np { @include nowrap; })
+    @assets.file "main.css.scss", %(@import "compass/css3";\nbutton { @include border-radius(5px); })
     
     asset = @env["main.css"]
-    asset.to_s.should == "p {\n  white-space: nowrap; }\n"
+    asset.to_s.should include("border-radius: 5px;")
   end
   
   it "imports globbed files" do
