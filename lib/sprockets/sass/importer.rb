@@ -81,10 +81,18 @@ module Sprockets
       # we make Sprockets behave like Sass, and import partial
       # style paths.
       def resolve(path)
-        path    = Pathname.new(path) unless path.is_a?(Pathname)
-        partial = path.dirname.join("_#{path.basename}")
+        path = Pathname.new(path) unless path.is_a?(Pathname)
         
-        resolve_path(path) || resolve_path(partial)
+        # First look for the normal path
+        context.resolve(path) { |found| return found }
+        
+        # Then look for the partial-style version
+        unless path.basename.to_s =~ /^_/
+          partial = path.dirname.join "_#{path.basename}"
+          context.resolve(partial) { |found| return found }
+        end
+        
+        nil
       end
       
       # Finds all of the assets using the given glob.
@@ -95,13 +103,6 @@ module Sprockets
         Pathname.glob(path_with_glob).sort.select do |path|
           path != context.pathname && context.asset_requirable?(path)
         end
-      end
-      
-      # Finds the asset using the context from Sprockets.
-      def resolve_path(path)
-        context.resolve path, :content_type => :self
-      rescue ::Sprockets::FileNotFound, ::Sprockets::ContentTypeMismatch
-        nil
       end
       
       # Returns the Sass syntax of the given path.
