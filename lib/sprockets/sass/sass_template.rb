@@ -8,6 +8,12 @@ module Sprockets
       # A reference to the current Sprockets context
       attr_reader :context
       
+      # Add the Sass helpers if they haven't already been added.
+      def initialize_engine
+        super
+        require_template_library "sprockets/sass/functions"
+      end
+      
       # Define the expected syntax for the template
       def syntax
         :sass

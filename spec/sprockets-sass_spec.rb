@@ -172,4 +172,30 @@ describe Sprockets::Sass do
     
     asset.should be_stale
   end
+  
+  it "adds the #asset_path helper" do
+    @assets.file "asset_path.css.scss", %(body { background: url(asset-path("image.jpg")); })
+    @assets.file "asset_url.css.scss", %(body { background: asset-url("image.jpg"); })
+    @assets.file "asset_path_options.css.scss", %(body { background: url(asset-path("image.jpg", $digest: true, $prefix: "/themes")); })
+    @assets.file "asset_url_options.css.scss", %(body { background: asset-url("image.jpg", $digest: true, $prefix: "/themes"); })
+    @assets.file "image.jpg"
+    
+    @env["asset_path.css"].to_s.should == %(body {\n  background: url("/assets/image.jpg"); }\n)
+    @env["asset_url.css"].to_s.should == %(body {\n  background: url("/assets/image.jpg"); }\n)
+    @env["asset_path_options.css"].to_s.should =~ %r(body \{\n  background: url\("/themes/image-[0-9a-f]+.jpg"\); \}\n)
+    @env["asset_url_options.css"].to_s.should =~ %r(body \{\n  background: url\("/themes/image-[0-9a-f]+.jpg"\); \}\n)
+  end
+  
+  it "adds the #image_path helper" do
+    @assets.file "image_path.css.scss", %(body { background: url(image-path("image.jpg")); })
+    @assets.file "image_url.css.scss", %(body { background: image-url("image.jpg"); })
+    @assets.file "image_path_options.css.scss", %(body { background: url(image-path("image.jpg", $digest: true, $prefix: "/themes")); })
+    @assets.file "image_url_options.css.scss", %(body { background: image-url("image.jpg", $digest: true, $prefix: "/themes"); })
+    @assets.file "image.jpg"
+    
+    @env["image_path.css"].to_s.should == %(body {\n  background: url("/assets/image.jpg"); }\n)
+    @env["image_url.css"].to_s.should == %(body {\n  background: url("/assets/image.jpg"); }\n)
+    @env["image_path_options.css"].to_s.should =~ %r(body \{\n  background: url\("/themes/image-[0-9a-f]+.jpg"\); \}\n)
+    @env["image_url_options.css"].to_s.should =~ %r(body \{\n  background: url\("/themes/image-[0-9a-f]+.jpg"\); \}\n)
+  end
 end
