@@ -16,6 +16,7 @@ _Note: This works in Rails 3.1, thanks to the [sass-rails gem](http://github.com
   Directives from within imported files also work as expected.
 * Automatic integration with Compass.
 * Supports glob imports, like sass-rails.
+* Asset path Sass functions. **New in 0.4!**
 
 
 Installation
@@ -125,6 +126,44 @@ button {
   @include border-radius(5px);
 }
 ```
+
+
+Asset Path Sass Functions
+-------------------------
+
+As of version 0.4.0, asset path helpers have been added. Here's a quick guide to using them in your application (look at [sprockets-helpers](https://github.com/petebrowne/sprockets-helpers) for more information):
+
+``` ruby
+map "/assets" do
+  environment = Sprockets::Environment.new
+  environment.append_path "assets/stylesheets"
+  
+  Sprockets::Helpers.configure do |config|
+    config.environment = environment
+    config.prefix      = "/assets"
+    config.digest      = false
+  end
+  
+  run environment
+end
+
+# etc...
+```
+
+The Sass functions are based on the ones in sass-rails. So there is a `-path` and `-url` version of each helper:
+
+``` scss
+background: url(asset-path("logo.jpg")); // background: url("/assets/logo.jpg");
+background: asset-url("logo.jpg");       // background: url("/assets/logo.jpg");
+```
+
+The API of the functions mimics the helpers provided by sprockets-helpers, using Sass keyword arguments as options:
+
+``` scss
+background: asset-url("logo.jpg", $digest: true);               // background: url("background: url("/assets/logo-27a8f1f96afd8d4c67a59eb9447f45bd.jpg");
+background: asset-url("logo", $prefix: "/themes", $ext: "jpg"); // background: url("background: url("/themes/logo.jpg");
+```
+
 
 Copyright
 ---------
