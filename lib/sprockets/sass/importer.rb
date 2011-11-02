@@ -84,12 +84,12 @@ module Sprockets
         path = Pathname.new(path) unless path.is_a?(Pathname)
         
         # First look for the normal path
-        context.resolve(path) { |found| return found }
+        context.resolve(path) { |found| return found if context.asset_requirable?(found) }
         
         # Then look for the partial-style version
         unless path.basename.to_s =~ /^_/
           partial = path.dirname.join "_#{path.basename}"
-          context.resolve(partial) { |found| return found }
+          context.resolve(partial) { |found| return found if context.asset_requirable?(found) }
         end
         
         nil

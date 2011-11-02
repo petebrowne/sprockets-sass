@@ -47,6 +47,14 @@ describe Sprockets::Sass do
     asset.to_s.should == "html {\n  height: 100%; }\n\nbody {\n  color: blue; }\n"
   end
   
+  it "imports files with the correct content type" do
+    @assets.file "main.css.scss", %(@import "dep";\nbody { color: $color; })
+    @assets.file "dep.js", "var app = {};"
+    @assets.file "_dep.css.scss", "$color: blue;"
+    asset = @env["main.css"]
+    asset.to_s.should == "body {\n  color: blue; }\n"
+  end
+  
   it "imports files with directives" do
     @assets.file "main.css.scss", %(@import "dep";)
     @assets.file "dep.css", "/*\n *= require subdep\n */"
