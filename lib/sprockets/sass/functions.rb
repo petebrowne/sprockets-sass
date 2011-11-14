@@ -55,7 +55,18 @@ module Sass
       #   background: asset-url("image.jpg");                // background: url("/assets/image.jpg");
       #   background: asset-url("image.jpg", $digest: true); // background: url("/assets/image-27a8f1f96afd8d4c67a59eb9447f45bd.jpg");
       #
-      def image_url(source, options = {})
+      def image_url(source, options = {}, cache_buster = nil)
+        # Check for the Compass #image_url API,
+        # and work with it. We don't want to break
+        # the Compass mixins that expect it.
+        if options.respond_to? :value
+          case options.value
+          when true
+            return image_path source
+          else
+            options = {}
+          end
+        end
         Script::String.new "url(#{image_path(source, options)})"
       end
       declare :image_url, [:source], :var_kwargs => true

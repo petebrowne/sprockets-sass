@@ -206,4 +206,15 @@ describe Sprockets::Sass do
     @env["image_path_options.css"].to_s.should =~ %r(body \{\n  background: url\("/themes/image-[0-9a-f]+.jpg"\); \}\n)
     @env["image_url_options.css"].to_s.should =~ %r(body \{\n  background: url\("/themes/image-[0-9a-f]+.jpg"\); \}\n)
   end
+  
+  it "doesn't break Compass's #image_url helper" do
+    @assets.file "image_path.css.scss", %(body { background: url(image-url("image.jpg", true)); })
+    @assets.file "image_url.css.scss", %(body { background: image-url("image.jpg", false); })
+    @assets.file "cache_buster.css.scss", %(body { background: image-url("image.jpg", false, true); })
+    @assets.file "image.jpg"
+    
+    @env["image_path.css"].to_s.should == %(body {\n  background: url("/assets/image.jpg"); }\n)
+    @env["image_url.css"].to_s.should == %(body {\n  background: url("/assets/image.jpg"); }\n)
+    @env["cache_buster.css"].to_s.should == %(body {\n  background: url("/assets/image.jpg"); }\n)
+  end
 end
