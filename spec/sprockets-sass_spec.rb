@@ -142,13 +142,13 @@ describe Sprockets::Sass do
     dep = @assets.file "dep.css.scss", "$color: blue;"
     
     asset = @env["main.css"]
-    asset.should be_fresh
+    asset.should be_fresh(@env)
     
     mtime = Time.now + 1
     dep.open("w") { |f| f.write "$color: red;" }
     dep.utime mtime, mtime
     
-    asset.should be_stale
+    asset.should_not be_fresh(@env)
   end
 
   it "adds dependencies from assets when imported" do
@@ -157,13 +157,13 @@ describe Sprockets::Sass do
     dep = @assets.file "dep2.css.scss", "$color: blue;"
     
     asset = @env["main.css"]
-    asset.should be_fresh
+    asset.should be_fresh(@env)
     
     mtime = Time.now + 1
     dep.open("w") { |f| f.write "$color: red;" }
     dep.utime mtime, mtime
     
-    asset.should be_stale
+    asset.should_not be_fresh(@env)
   end
 
   it "adds dependencies when imported from a glob" do
@@ -172,13 +172,13 @@ describe Sprockets::Sass do
     dep = @assets.file "folder/_dep2.scss", "$bg-color: red;"
     
     asset = @env["main.css"]
-    asset.should be_fresh
+    asset.should be_fresh(@env)
     
     mtime = Time.now + 1
     dep.open("w") { |f| f.write "$bg-color: white;" }
     dep.utime mtime, mtime
     
-    asset.should be_stale
+    asset.should_not be_fresh(@env)
   end
   
   it "adds the #asset_path helper" do
