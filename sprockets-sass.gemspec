@@ -21,6 +21,7 @@ Gem::Specification.new do |s|
   s.add_dependency "sprockets",                  "~> 2.0"
   s.add_dependency "sprockets-helpers",          "~> 0.2"
   s.add_dependency "tilt",                       "~> 1.1"
+  s.add_development_dependency "appraisal",      "~> 0.4"
   s.add_development_dependency "rspec",          "~> 2.6"
   s.add_development_dependency "test-construct", "~> 1.2"
   s.add_development_dependency "sass",           "~> 3.1"
