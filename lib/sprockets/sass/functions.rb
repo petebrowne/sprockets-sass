@@ -70,6 +70,9 @@ module Sass
         Script::String.new "url(#{image_path(source, options)})"
       end
       declare :image_url, [:source], :var_kwargs => true
+      declare :image_url, [:path]
+      declare :image_url, [:path, :only_path]
+      declare :image_url, [:path, :only_path, :cache_buster]
       
       protected
       
