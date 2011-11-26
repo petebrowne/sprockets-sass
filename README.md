@@ -1,7 +1,7 @@
 sprockets-sass
 ==============
 
-**Better Sass integration with [Sprockets 2.0](http://github.com/sstephenson/sprockets)**
+**Better Sass integration with [Sprockets 2.x](http://github.com/sstephenson/sprockets)**
 
 When using Sprockets 2.0 with Sass you will eventually run into a pretty big issue. `//= require` directives will not allow Sass mixins, variables, etc. to be shared between files. So you'll try to use `@import`, and that'll also blow up in your face. `sprockets-sass` fixes all of this by creating a Sass::Importer that is Sprockets aware.
 
