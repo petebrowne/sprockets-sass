@@ -3,7 +3,7 @@ sprockets-sass
 
 **Better Sass integration with [Sprockets 2.x](http://github.com/sstephenson/sprockets)**
 
-When using Sprockets 2.0 with Sass you will eventually run into a pretty big issue. `//= require` directives will not allow Sass mixins, variables, etc. to be shared between files. So you'll try to use `@import`, and that'll also blow up in your face. `sprockets-sass` fixes all of this by creating a Sass::Importer that is Sprockets aware.
+When using Sprockets 2.x with Sass you will eventually run into a pretty big issue. `//= require` directives will not allow Sass mixins, variables, etc. to be shared between files. So you'll try to use `@import`, and that'll also blow up in your face. `sprockets-sass` fixes all of this by creating a Sass::Importer that is Sprockets aware.
 
 _Note: This works in Rails 3.1, thanks to the [sass-rails gem](http://github.com/rails/sass-rails). But if you want to use Sprockets and Sass anywhere else, like Sinatra, use `sprockets-sass`._
 
@@ -131,7 +131,15 @@ button {
 Asset Path Sass Functions
 -------------------------
 
-As of version 0.4.0, asset path helpers have been added. Here's a quick guide to using them in your application (look at [sprockets-helpers](https://github.com/petebrowne/sprockets-helpers) for more information):
+As of version 0.4.0, asset path helpers have been added. In order to use them you must add [sprockets-helpers](https://github.com/petebrowne/sprockets-helpers) to your Gemfile:
+
+``` ruby
+gem "sprockets-sass",    "~> 0.5"
+gem "sprockets-helpers", "~> 0.2"
+# etc...
+```
+
+Here's a quick guide to setting up sprockets-helpers in your application (look at the project's [README](https://github.com/petebrowne/sprockets-helpers/blob/master/README.md) for more information):
 
 ``` ruby
 map "/assets" do
