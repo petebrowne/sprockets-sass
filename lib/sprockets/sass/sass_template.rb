@@ -11,7 +11,7 @@ module Sprockets
       # Add the Sass functions if they haven't already been added.
       def initialize_engine
         super
-        require_template_library "sprockets/sass/functions"
+        Sass.load_sass_functions
       end
       
       # Define the expected syntax for the template

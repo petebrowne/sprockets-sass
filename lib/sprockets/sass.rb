@@ -11,19 +11,24 @@ module Sprockets
     def self.options
       @options ||= {}
     end
+    
+    # Adds the Sass functions if the
+    # sprockets-helpers gem is available.
+    def self.load_sass_functions
+      begin
+        require "sprockets/sass/functions"
+      rescue LoadError
+        return false
+      end
+      
+      true
+    end
   end
   
   # Register the new templates
   register_engine ".sass", Sass::SassTemplate
   register_engine ".scss", Sass::ScssTemplate
   
-  # Attempt to add the Sass Functions
-  begin
-    require "sass"
-    require "sprockets/sass/functions"
-  rescue LoadError
-    # fail silently...
-  end
+  # Attempt to load the Sass functions
+  Sass.load_sass_functions
 end
-
-
