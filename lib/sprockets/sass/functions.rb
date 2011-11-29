@@ -1,8 +1,8 @@
 require "sass"
 require "sprockets-helpers"
 
-module Sass
-  module Script
+module Sprockets
+  module Sass
     module Functions
       # Using Sprockets::Helpers#asset_path, return the full path
       # for the given +source+ as a Sass String. This supports keyword
@@ -14,9 +14,8 @@ module Sass
       #   background: url(asset-path("image.jpg", $digest: true)); // background: url("/assets/image-27a8f1f96afd8d4c67a59eb9447f45bd.jpg");
       #
       def asset_path(source, options = {})
-        Script::String.new context.asset_path(source.value, map_options(options)), :string
+        ::Sass::Script::String.new context.asset_path(source.value, map_options(options)), :string
       end
-      declare :asset_path, [:source], :var_kwargs => true
       
       # Using Sprockets::Helpers#asset_path, return the url CSS
       # for the given +source+ as a Sass String. This supports keyword
@@ -28,9 +27,8 @@ module Sass
       #   background: asset-url("image.jpg", $digest: true); // background: url("/assets/image-27a8f1f96afd8d4c67a59eb9447f45bd.jpg");
       #
       def asset_url(source, options = {})
-        Script::String.new "url(#{asset_path(source, options)})"
+        ::Sass::Script::String.new "url(#{asset_path(source, options)})"
       end
-      declare :asset_url, [:source], :var_kwargs => true
       
       # Using Sprockets::Helpers#image_path, return the full path
       # for the given +source+ as a Sass String. This supports keyword
@@ -42,9 +40,8 @@ module Sass
       #   background: url(image-path("image.jpg", $digest: true)); // background: url("/assets/image-27a8f1f96afd8d4c67a59eb9447f45bd.jpg");
       #
       def image_path(source, options = {})
-        Script::String.new context.image_path(source.value, map_options(options)), :string
+        ::Sass::Script::String.new context.image_path(source.value, map_options(options)), :string
       end
-      declare :image_path, [:source], :var_kwargs => true
       
       # Using Sprockets::Helpers#image_path, return the url CSS
       # for the given +source+ as a Sass String. This supports keyword
@@ -67,12 +64,8 @@ module Sass
             options = {}
           end
         end
-        Script::String.new "url(#{image_path(source, options)})"
+        ::Sass::Script::String.new "url(#{image_path(source, options)})"
       end
-      declare :image_url, [:source], :var_kwargs => true
-      declare :image_url, [:path]
-      declare :image_url, [:path, :only_path]
-      declare :image_url, [:path, :only_path, :cache_buster]
       
       protected
       
@@ -85,10 +78,22 @@ module Sass
       # Returns an options hash where the keys are symbolized
       # and the values are unwrapped Sass literals.
       def map_options(options = {}) # :nodoc:
-        Sass::Util.map_hash(options) do |key, value|
+        ::Sass::Util.map_hash(options) do |key, value|
           [key.to_sym, value.respond_to?(:value) ? value.value : value]
         end
       end
     end
   end
+end
+
+module Sass::Script::Functions
+  include Sprockets::Sass::Functions
+  
+  # Hack to ensure the Compass API signatures don't take precedence
+  @signatures[:image_url] = []
+  
+  declare :asset_path, [:source], :var_kwargs => true
+  declare :asset_url,  [:source], :var_kwargs => true
+  declare :image_path, [:source], :var_kwargs => true
+  declare :image_url,  [:source], :var_kwargs => true, :var_args => true
 end
