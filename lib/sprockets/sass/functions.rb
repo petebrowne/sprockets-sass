@@ -14,7 +14,19 @@ module Sprockets
       #   background: url(asset-path("image.jpg", $digest: true)); // background: url("/assets/image-27a8f1f96afd8d4c67a59eb9447f45bd.jpg");
       #
       def asset_path(source, options = {})
-        ::Sass::Script::String.new context.asset_path(source.value, map_options(options)), :string
+        # Check for the Sass::Rails' #asset_path API,
+        # and work with it. We want to make Rails assets work
+        # just fine with Machined.
+        if options.respond_to? :value
+          kind = options.value
+          options = {}
+        end
+        
+        if kind && context.respond_to?("#{kind}_path")
+          ::Sass::Script::String.new context.send("#{kind}_path", source.value), :string
+        else
+          ::Sass::Script::String.new context.asset_path(source.value, map_options(options)), :string
+        end
       end
       
       # Using Sprockets::Helpers#asset_path, return the url CSS
@@ -89,11 +101,18 @@ end
 module Sass::Script::Functions
   include Sprockets::Sass::Functions
   
-  # Hack to ensure the Compass API signatures don't take precedence
-  @signatures[:image_url] = []
+  # Hack to ensure previous API declarations (by Compass or whatever)
+  # don't take precedence.
+  [:asset_path, :asset_url, :image_path, :image_url].each do |method|
+    defined?(@signatures) && @signatures.delete(method)
+  end
   
   declare :asset_path, [:source], :var_kwargs => true
+  declare :asset_path, [:source, :kind]
   declare :asset_url,  [:source], :var_kwargs => true
+  declare :asset_url,  [:source, :kind]
   declare :image_path, [:source], :var_kwargs => true
-  declare :image_url,  [:source], :var_kwargs => true, :var_args => true
+  declare :image_url,  [:source], :var_kwargs => true
+  declare :image_url,  [:source, :only_path]
+  declare :image_url,  [:source, :only_path, :cache_buster]
 end
