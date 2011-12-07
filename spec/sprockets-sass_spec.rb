@@ -207,6 +207,13 @@ describe Sprockets::Sass do
     @env["image_url_options.css"].to_s.should =~ %r(body \{\n  background: url\("/themes/image-[0-9a-f]+.jpg"\); \}\n)
   end
   
+  it "adds the #asset_data_uri helper" do
+    @assets.file "asset_data_uri.css.scss", %(body { background: asset-data-uri("image.jpg"); })
+    @assets.file "image.jpg", File.read("spec/fixtures/image.jpg")
+    
+    @env["asset_data_uri.css"].to_s.should == %(body {\n  background: url(data:image/jpeg;base64,%2F9j%2F4AAQSkZJRgABAgAAZABkAAD%2F7AARRHVja3kAAQAEAAAAPAAA%2F%2B4ADkFkb2JlAGTAAAAAAf%2FbAIQABgQEBAUEBgUFBgkGBQYJCwgGBggLDAoKCwoKDBAMDAwMDAwQDA4PEA8ODBMTFBQTExwbGxscHx8fHx8fHx8fHwEHBwcNDA0YEBAYGhURFRofHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8f%2F8AAEQgAAQABAwERAAIRAQMRAf%2FEAEoAAQAAAAAAAAAAAAAAAAAAAAgBAQAAAAAAAAAAAAAAAAAAAAAQAQAAAAAAAAAAAAAAAAAAAAARAQAAAAAAAAAAAAAAAAAAAAD%2F2gAMAwEAAhEDEQA%2FACoD%2F9k%3D); }\n)
+  end
+  
   it "mirrors Compass's #image_url helper" do
     @assets.file "image_path.css.scss", %(body { background: url(image-url("image.jpg", true)); })
     @assets.file "image_url.css.scss", %(body { background: image-url("image.jpg", false); })

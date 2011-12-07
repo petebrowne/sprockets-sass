@@ -79,6 +79,17 @@ module Sprockets
         ::Sass::Script::String.new "url(#{image_path(source, options)})"
       end
       
+      # Using Sprockets::Context#asset_data_uri return a Base64-encoded `data:`
+      # URI with the contents of the asset at the specified path.
+      #
+      # === Examples
+      # 
+      #   background: asset-data-uri("image.jpg"); // background: url(data:image/jpeg;base64,...);
+      #
+      def asset_data_uri(source)
+        ::Sass::Script::String.new "url(#{context.asset_data_uri(source.value)})"
+      end
+      
       protected
       
       # Returns a reference to the Sprocket's context through
@@ -103,16 +114,17 @@ module Sass::Script::Functions
   
   # Hack to ensure previous API declarations (by Compass or whatever)
   # don't take precedence.
-  [:asset_path, :asset_url, :image_path, :image_url].each do |method|
+  [:asset_path, :asset_url, :image_path, :image_url, :asset_data_uri].each do |method|
     defined?(@signatures) && @signatures.delete(method)
   end
   
-  declare :asset_path, [:source], :var_kwargs => true
-  declare :asset_path, [:source, :kind]
-  declare :asset_url,  [:source], :var_kwargs => true
-  declare :asset_url,  [:source, :kind]
-  declare :image_path, [:source], :var_kwargs => true
-  declare :image_url,  [:source], :var_kwargs => true
-  declare :image_url,  [:source, :only_path]
-  declare :image_url,  [:source, :only_path, :cache_buster]
+  declare :asset_path,     [:source], :var_kwargs => true
+  declare :asset_path,     [:source, :kind]
+  declare :asset_url,      [:source], :var_kwargs => true
+  declare :asset_url,      [:source, :kind]
+  declare :image_path,     [:source], :var_kwargs => true
+  declare :image_url,      [:source], :var_kwargs => true
+  declare :image_url,      [:source, :only_path]
+  declare :image_url,      [:source, :only_path, :cache_buster]
+  declare :asset_data_uri, [:source]
 end
