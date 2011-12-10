@@ -168,8 +168,14 @@ background: asset-url("logo.jpg");       // background: url("/assets/logo.jpg");
 The API of the functions mimics the helpers provided by sprockets-helpers, using Sass keyword arguments as options:
 
 ``` scss
-background: asset-url("logo.jpg", $digest: true);               // background: url("background: url("/assets/logo-27a8f1f96afd8d4c67a59eb9447f45bd.jpg");
-background: asset-url("logo", $prefix: "/themes", $ext: "jpg"); // background: url("background: url("/themes/logo.jpg");
+background: asset-url("logo.jpg", $digest: true);               // background: url("/assets/logo-27a8f1f96afd8d4c67a59eb9447f45bd.jpg");
+background: asset-url("logo", $prefix: "/themes", $ext: "jpg"); // background: url("/themes/logo.jpg");
+```
+
+As of version 0.6.0, `#asset_data_uri` has been added, which creates a data URI for the given asset:
+
+``` scss
+background: asset-data-uri("image.jpg"); // background: url(data:image/jpeg;base64,...);
 ```
 
 
