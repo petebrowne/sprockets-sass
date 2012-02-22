@@ -1,5 +1,4 @@
 require "sass"
-require "sprockets-helpers"
 
 module Sprockets
   module Sass
