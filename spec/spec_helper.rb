@@ -2,6 +2,7 @@ require "sprockets"
 require "sprockets-sass"
 require "compass"
 require "construct"
+require "sprockets-helpers"
 
 Compass.configuration do |compass|
   compass.line_comments = false
