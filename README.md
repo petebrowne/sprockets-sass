@@ -142,6 +142,11 @@ gem "sprockets-helpers", "~> 0.2"
 Here's a quick guide to setting up sprockets-helpers in your application (look at the project's [README](https://github.com/petebrowne/sprockets-helpers/blob/master/README.md) for more information):
 
 ``` ruby
+require "sprockets"
+require "sprockets-sass"
+require "sprockets-helpers"
+require "sass"
+
 map "/assets" do
   environment = Sprockets::Environment.new
   environment.append_path "assets/stylesheets"
