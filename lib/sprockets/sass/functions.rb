@@ -13,9 +13,7 @@ module Sprockets
       #   background: url(asset-path("image.jpg", $digest: true)); // background: url("/assets/image-27a8f1f96afd8d4c67a59eb9447f45bd.jpg");
       #
       def asset_path(source, options = {})
-        # Check for the Sass::Rails' #asset_path API,
-        # and work with it. We want to make Rails assets work
-        # just fine with Machined.
+        # Work with the Sass::Rails #asset_path API
         if options.respond_to? :value
           kind = options.value
           options = {}
@@ -64,9 +62,7 @@ module Sprockets
       #   background: asset-url("image.jpg", $digest: true); // background: url("/assets/image-27a8f1f96afd8d4c67a59eb9447f45bd.jpg");
       #
       def image_url(source, options = {}, cache_buster = nil)
-        # Check for the Compass #image_url API,
-        # and work with it. We don't want to break
-        # the Compass mixins that expect it.
+        # Work with the Compass #image_url API
         if options.respond_to? :value
           case options.value
           when true

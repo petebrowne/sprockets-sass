@@ -18,13 +18,7 @@ module Sprockets
         super
         
         if Sass.add_sass_functions
-          begin
-            require "sprockets/sass/functions"
-          rescue LoadError
-            # Safely ignore load issues, because
-            # sprockets-helpers may not be available.
-            @@sass_functions_added = false
-          end
+          require "sprockets/sass/functions"
           @@sass_functions_added = true
         else
           @@sass_functions_added = false
