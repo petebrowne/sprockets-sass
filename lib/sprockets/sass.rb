@@ -5,8 +5,9 @@ require "sprockets/engines"
 
 module Sprockets
   module Sass
-    autoload :Importer, "sprockets/sass/importer"
-    
+    autoload :Importer,   "sprockets/sass/importer"
+    autoload :Compressor, "sprockets/sass/compressor"
+
     class << self
       # Global configuration for `Sass::Engine` instances.
       attr_accessor :options
