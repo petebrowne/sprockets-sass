@@ -8,7 +8,7 @@ module Sprockets
       # A reference to the current Sprockets context
       attr_reader :context
       
-      # Templates are initialized once the 
+      # Templates are initialized once the functions are added.
       def self.engine_initialized?
         super && defined?(@@sass_functions_added)
       end
@@ -46,6 +46,17 @@ module Sprockets
 
       protected
       
+      # Returns a Sprockets-aware cache store for Sass::Engine.
+      def cache_store
+        return nil if context.environment.nil?
+        
+        if defined?(Sprockets::SassCacheStore)
+          Sprockets::SassCacheStore.new context.environment
+        else
+          CacheStore.new context.environment
+        end
+      end
+      
       # A reference to the custom Sass importer, `Sprockets::Sass::Importer`.
       def importer
         Importer.new context
@@ -54,10 +65,11 @@ module Sprockets
       # Assemble the options for the `Sass::Engine`
       def sass_options
         merge_sass_options(default_sass_options, options).merge(
-          :filename => eval_file,
-          :line     => line,
-          :syntax   => syntax,
-          :importer => importer
+          :filename    => eval_file,
+          :line        => line,
+          :syntax      => syntax,
+          :cache_store => cache_store,
+          :importer    => importer
         )
       end
       

@@ -181,6 +181,17 @@ describe Sprockets::Sass do
     asset.should_not be_fresh(@env)
   end
   
+  it "uses the environment's cache" do
+    cache = {}
+    @env.cache = cache
+    
+    @assets.file "main.css.scss", %($color: blue;;\nbody { color: $color; })
+    
+    @env['main.css'].to_s
+    sass_cache = cache.keys.detect { |key| key =~ /main\.css\.scss/ }
+    sass_cache.should_not be_nil
+  end
+  
   it "adds the #asset_path helper" do
     @assets.file "asset_path.css.scss", %(body { background: url(asset-path("image.jpg")); })
     @assets.file "asset_url.css.scss", %(body { background: asset-url("image.jpg"); })
