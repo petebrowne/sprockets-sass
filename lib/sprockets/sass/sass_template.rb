@@ -48,7 +48,7 @@ module Sprockets
       
       # Returns a Sprockets-aware cache store for Sass::Engine.
       def cache_store
-        return nil if context.environment.nil?
+        return nil if context.environment.cache.nil?
         
         if defined?(Sprockets::SassCacheStore)
           Sprockets::SassCacheStore.new context.environment

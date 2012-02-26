@@ -185,7 +185,7 @@ describe Sprockets::Sass do
     cache = {}
     @env.cache = cache
     
-    @assets.file "main.css.scss", %($color: blue;;\nbody { color: $color; })
+    @assets.file "main.css.scss", %($color: blue;\nbody { color: $color; })
     
     @env['main.css'].to_s
     sass_cache = cache.keys.detect { |key| key =~ /main\.css\.scss/ }
