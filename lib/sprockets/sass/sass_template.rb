@@ -10,7 +10,7 @@ module Sprockets
       
       # Templates are initialized once the functions are added.
       def self.engine_initialized?
-        super && defined?(@@sass_functions_added)
+        super && (!Sass.add_sass_functions || defined?(Functions))
       end
       
       # Add the Sass functions if they haven't already been added.
@@ -19,9 +19,6 @@ module Sprockets
         
         if Sass.add_sass_functions
           require "sprockets/sass/functions"
-          @@sass_functions_added = true
-        else
-          @@sass_functions_added = false
         end
       end
       
