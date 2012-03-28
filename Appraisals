@@ -14,10 +14,14 @@ appraise "sprockets-2.3" do
   gem "sprockets", "~> 2.3.0"
 end
 
+appraise "sprockets-2.4" do
+  gem "sprockets", "~> 2.4.0"
+end
+
 appraise "compass-0.11" do
   gem "compass", "~> 0.11.0"
 end
 
 appraise "compass-0.12" do
-  gem "compass", ">= 0.12.alpha.1"
+  gem "compass", "~> 0.12.0"
 end
