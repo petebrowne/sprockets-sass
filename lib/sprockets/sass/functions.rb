@@ -19,10 +19,10 @@ module Sprockets
           options = {}
         end
         
-        if kind && context.respond_to?("#{kind}_path")
-          ::Sass::Script::String.new context.send("#{kind}_path", source.value), :string
+        if kind && sprockets_context.respond_to?("#{kind}_path")
+          ::Sass::Script::String.new sprockets_context.send("#{kind}_path", source.value), :string
         else
-          ::Sass::Script::String.new context.asset_path(source.value, map_options(options)), :string
+          ::Sass::Script::String.new sprockets_context.asset_path(source.value, map_options(options)).to_s, :string
         end
       end
       
@@ -49,7 +49,7 @@ module Sprockets
       #   background: url(image-path("image.jpg", $digest: true)); // background: url("/assets/image-27a8f1f96afd8d4c67a59eb9447f45bd.jpg");
       #
       def image_path(source, options = {})
-        ::Sass::Script::String.new context.image_path(source.value, map_options(options)), :string
+        ::Sass::Script::String.new sprockets_context.image_path(source.value, map_options(options)).to_s, :string
       end
       
       # Using Sprockets::Helpers#image_path, return the url CSS
@@ -82,17 +82,17 @@ module Sprockets
       #   background: asset-data-uri("image.jpg"); // background: url(data:image/jpeg;base64,...);
       #
       def asset_data_uri(source)
-        ::Sass::Script::String.new "url(#{context.asset_data_uri(source.value)})"
+        ::Sass::Script::String.new "url(#{sprockets_context.asset_data_uri(source.value)})"
       end
       
       protected
       
       # Returns a reference to the Sprocket's context through
       # the importer.
-      def context # :nodoc:
+      def sprockets_context # :nodoc:
         options[:importer].context
       end
-      
+            
       # Returns an options hash where the keys are symbolized
       # and the values are unwrapped Sass literals.
       def map_options(options = {}) # :nodoc:
