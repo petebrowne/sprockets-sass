@@ -84,6 +84,20 @@ describe Sprockets::Sass do
     asset.to_s.should == "body {\n  color: blue; }\n"
   end
   
+  it "imports partials relative to the current directory" do
+    @assets.file "directory/dependent/_dependency.css.scss", "$color: blue;"
+    @assets.file "directory/main.css.scss", %(@import "dependent/dependency";\nbody { color: $color; })
+    asset = @env["directory/main.css"]
+    asset.to_s.should == "body {\n  color: blue; }\n"
+  end
+
+  it "imports files relative to the current directory" do
+    @assets.file "directory/dependent/dependency.css.scss", "$color: blue;"
+    @assets.file "directory/main.css.scss", %(@import "dependent/dependency";\nbody { color: $color; })
+    asset = @env["directory/main.css"]
+    asset.to_s.should == "body {\n  color: blue; }\n"
+  end
+
   it "shares Sass environment with other imports" do
     @assets.file "main.css.scss", %(@import "dep1";\n@import "dep2";)
     @assets.file "_dep1.scss", "$color: blue;"
