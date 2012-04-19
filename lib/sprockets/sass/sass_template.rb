@@ -38,6 +38,10 @@ module Sprockets
         @output ||= begin
           @context = context
           ::Sass::Engine.new(data, sass_options).render
+        rescue ::Sass::SyntaxError => e
+          # Annotates exception message with parse line number
+          context.__LINE__ = e.sass_backtrace.first[:line]
+          raise e
         end
       end
 
