@@ -258,4 +258,14 @@ describe Sprockets::Sass do
     @env["asset_path.css"].to_s.should == %(body {\n  background: url("/assets/image.jpg"); }\n)
     @env["asset_url.css"].to_s.should == %(body {\n  background: url("/images/icon.jpg"); }\n)
   end
+
+  it "compresses css" do
+    css = <<-CSS
+      div {
+        color: red;
+      }
+    CSS
+
+    Sprockets::Sass::Compressor.new.compress(css).should == "div{color:red}\n"
+  end
 end

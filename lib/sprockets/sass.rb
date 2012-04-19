@@ -6,8 +6,9 @@ require "sprockets/engines"
 module Sprockets
   module Sass
     autoload :CacheStore, "sprockets/sass/cache_store"
+    autoload :Compressor, "sprockets/sass/compressor"
     autoload :Importer,   "sprockets/sass/importer"
-    
+
     class << self
       # Global configuration for `Sass::Engine` instances.
       attr_accessor :options
