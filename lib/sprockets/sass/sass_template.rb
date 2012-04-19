@@ -1,9 +1,9 @@
-require "tilt"
+require 'tilt'
 
 module Sprockets
   module Sass
     class SassTemplate < Tilt::SassTemplate
-      self.default_mime_type = "text/css"
+      self.default_mime_type = 'text/css'
       
       # A reference to the current Sprockets context
       attr_reader :context
@@ -18,7 +18,7 @@ module Sprockets
         super
         
         if Sass.add_sass_functions
-          require "sprockets/sass/functions"
+          require 'sprockets/sass/functions'
         end
       end
       

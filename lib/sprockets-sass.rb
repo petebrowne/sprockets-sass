@@ -1,1 +1,1 @@
-require "sprockets/sass"
+require 'sprockets/sass'

@@ -1,14 +1,14 @@
-require "sprockets/sass/version"
-require "sprockets/sass/sass_template"
-require "sprockets/sass/scss_template"
-require "sprockets/engines"
+require 'sprockets/sass/version'
+require 'sprockets/sass/sass_template'
+require 'sprockets/sass/scss_template'
+require 'sprockets/engines'
 
 module Sprockets
   module Sass
-    autoload :CacheStore, "sprockets/sass/cache_store"
-    autoload :Compressor, "sprockets/sass/compressor"
-    autoload :Importer,   "sprockets/sass/importer"
-
+    autoload :CacheStore, 'sprockets/sass/cache_store'
+    autoload :Compressor, 'sprockets/sass/compressor'
+    autoload :Importer,   'sprockets/sass/importer'
+    
     class << self
       # Global configuration for `Sass::Engine` instances.
       attr_accessor :options
@@ -23,6 +23,6 @@ module Sprockets
     @add_sass_functions = true
   end
   
-  register_engine ".sass", Sass::SassTemplate
-  register_engine ".scss", Sass::ScssTemplate
+  register_engine '.sass', Sass::SassTemplate
+  register_engine '.scss', Sass::ScssTemplate
 end

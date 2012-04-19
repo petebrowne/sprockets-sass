@@ -1,8 +1,8 @@
-require "sprockets"
-require "sprockets-sass"
-require "sprockets-helpers"
-require "compass"
-require "construct"
+require 'sprockets'
+require 'sprockets-sass'
+require 'sprockets-helpers'
+require 'compass'
+require 'construct'
 
 Compass.configuration do |compass|
   compass.line_comments = false

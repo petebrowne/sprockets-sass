@@ -1,5 +1,5 @@
-require "sass/importers/base"
-require "pathname"
+require 'sass/importers/base'
+require 'pathname'
 
 module Sprockets
   module Sass
@@ -139,7 +139,7 @@ module Sprockets
       
       # Returns the Sass syntax of the given path.
       def syntax(path)
-        path.to_s.include?(".sass") ? :sass : :scss
+        path.to_s.include?('.sass') ? :sass : :scss
       end
       
       # Returns the string to be passed to the Sass engine. We use

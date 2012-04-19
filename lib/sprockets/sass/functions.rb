@@ -1,4 +1,4 @@
-require "sass"
+require 'sass'
 
 module Sprockets
   module Sass

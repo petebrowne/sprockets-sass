@@ -8,10 +8,10 @@ RSpec::Matchers.define :be_fresh do |env|
   end
   
   failure_message_for_should do |env|
-    "expected asset to be fresh"
+    'expected asset to be fresh'
   end
   
   failure_message_for_should_not do |env|
-    "expected asset to be stale"
+    'expected asset to be stale'
   end
 end
