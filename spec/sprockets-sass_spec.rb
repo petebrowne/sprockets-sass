@@ -33,8 +33,8 @@ describe Sprockets::Sass do
     asset.to_s.should == "body {\n  color: blue; }\n"
   end
   
-  it 'imports partial style files' do
-    @assets.file 'main.css.scss', %(@import "dep";\nbody { color: $color; })
+  it 'imports partials' do
+    @assets.file 'main.css.scss', %(@import "_dep";\nbody { color: $color; })
     @assets.file '_dep.css.scss', '$color: blue;'
     asset = @env['main.css']
     asset.to_s.should == "body {\n  color: blue; }\n"
@@ -71,10 +71,35 @@ describe Sprockets::Sass do
   end
   
   it 'imports relative files' do
-    @assets.file 'folder/main.css.scss', %(@import "./dep";\nbody { color: $color; })
-    @assets.file 'folder/dep.css.scss', '$color: blue;'
+    @assets.file 'folder/main.css.scss', %(@import "./dep-1";\n@import "./subfolder/dep-2";\nbody { background-color: $background-color; color: $color; })
+    @assets.file 'folder/dep-1.css.scss', '$background-color: red;'
+    @assets.file 'folder/subfolder/dep-2.css.scss', '$color: blue;'
     asset = @env['folder/main.css']
-    asset.to_s.should == "body {\n  color: blue; }\n"
+    asset.to_s.should == "body {\n  background-color: red;\n  color: blue; }\n"
+  end
+  
+  it 'imports relative partials' do
+    @assets.file 'folder/main.css.scss', %(@import "./dep-1";\n@import "./subfolder/dep-2";\nbody { background-color: $background-color; color: $color; })
+    @assets.file 'folder/_dep-1.css.scss', '$background-color: red;'
+    @assets.file 'folder/subfolder/_dep-2.css.scss', '$color: blue;'
+    asset = @env['folder/main.css']
+    asset.to_s.should == "body {\n  background-color: red;\n  color: blue; }\n"
+  end
+  
+  it 'imports relative files without preceding ./' do
+    @assets.file 'folder/main.css.scss', %(@import "dep-1";\n@import "subfolder/dep-2";\nbody { background-color: $background-color; color: $color; })
+    @assets.file 'folder/dep-1.css.scss', '$background-color: red;'
+    @assets.file 'folder/subfolder/dep-2.css.scss', '$color: blue;'
+    asset = @env['folder/main.css']
+    asset.to_s.should == "body {\n  background-color: red;\n  color: blue; }\n"
+  end
+  
+  it 'imports relative partials without preceding ./' do
+    @assets.file 'folder/main.css.scss', %(@import "dep-1";\n@import "subfolder/dep-2";\nbody { background-color: $background-color; color: $color; })
+    @assets.file 'folder/_dep-1.css.scss', '$background-color: red;'
+    @assets.file 'folder/subfolder/_dep-2.css.scss', '$color: blue;'
+    asset = @env['folder/main.css']
+    asset.to_s.should == "body {\n  background-color: red;\n  color: blue; }\n"
   end
   
   it 'imports files relative to root' do
@@ -84,24 +109,17 @@ describe Sprockets::Sass do
     asset.to_s.should == "body {\n  color: blue; }\n"
   end
   
-  it 'imports partials relative to the current directory' do
-    @assets.file 'directory/dependent/_dependency.css.scss', '$color: blue;'
-    @assets.file 'directory/main.css.scss', %(@import "dependent/dependency";\nbody { color: $color; })
-    asset = @env['directory/main.css']
-    asset.to_s.should == "body {\n  color: blue; }\n"
-  end
-
-  it 'imports files relative to the current directory' do
-    @assets.file 'directory/dependent/dependency.css.scss', '$color: blue;'
-    @assets.file 'directory/main.css.scss', %(@import "dependent/dependency";\nbody { color: $color; })
-    asset = @env['directory/main.css']
+  it 'imports partials relative to root' do
+    @assets.file 'folder/main.css.scss', %(@import "dep";\nbody { color: $color; })
+    @assets.file '_dep.css.scss', '$color: blue;'
+    asset = @env['folder/main.css']
     asset.to_s.should == "body {\n  color: blue; }\n"
   end
   
   it 'shares Sass environment with other imports' do
-    @assets.file 'main.css.scss', %(@import "dep1";\n@import "dep2";)
-    @assets.file '_dep1.scss', '$color: blue;'
-    @assets.file '_dep2.scss', 'body { color: $color; }'
+    @assets.file 'main.css.scss', %(@import "dep-1";\n@import "dep-2";)
+    @assets.file '_dep-1.scss', '$color: blue;'
+    @assets.file '_dep-2.scss', 'body { color: $color; }'
     asset = @env['main.css']
     asset.to_s.should == "body {\n  color: blue; }\n"
   end
@@ -145,8 +163,8 @@ describe Sprockets::Sass do
   
   it 'imports globbed files' do
     @assets.file 'main.css.scss', %(@import "folder/*";\nbody { color: $color; background: $bg-color; })
-    @assets.file 'folder/dep1.css.scss', '$color: blue;'
-    @assets.file 'folder/dep2.css.scss', '$bg-color: red;'
+    @assets.file 'folder/dep-1.css.scss', '$color: blue;'
+    @assets.file 'folder/dep-2.css.scss', '$bg-color: red;'
     asset = @env['main.css']
     asset.to_s.should == "body {\n  color: blue;\n  background: red; }\n"
   end
@@ -159,22 +177,22 @@ describe Sprockets::Sass do
     asset.should be_fresh(@env)
     
     mtime = Time.now + 1
-    dep.open('w') { |f| f.write "$color: red;" }
+    dep.open('w') { |f| f.write '$color: red;' }
     dep.utime mtime, mtime
     
     asset.should_not be_fresh(@env)
   end
 
   it 'adds dependencies from assets when imported' do
-    @assets.file 'main.css.scss', %(@import "dep1";\nbody { color: $color; })
-    @assets.file 'dep1.css.scss', %(@import "dep2";\n)
-    dep = @assets.file 'dep2.css.scss', '$color: blue;'
+    @assets.file 'main.css.scss', %(@import "dep-1";\nbody { color: $color; })
+    @assets.file 'dep-1.css.scss', %(@import "dep-2";\n)
+    dep = @assets.file 'dep-2.css.scss', '$color: blue;'
     
     asset = @env['main.css']
     asset.should be_fresh(@env)
     
     mtime = Time.now + 1
-    dep.open('w') { |f| f.write "$color: red;" }
+    dep.open('w') { |f| f.write '$color: red;' }
     dep.utime mtime, mtime
     
     asset.should_not be_fresh(@env)
@@ -182,8 +200,8 @@ describe Sprockets::Sass do
 
   it 'adds dependencies when imported from a glob' do
     @assets.file 'main.css.scss', %(@import "folder/*";\nbody { color: $color; background: $bg-color; })
-    @assets.file 'folder/_dep1.scss', '$color: blue;'
-    dep = @assets.file 'folder/_dep2.scss', '$bg-color: red;'
+    @assets.file 'folder/_dep-1.scss', '$color: blue;'
+    dep = @assets.file 'folder/_dep-2.scss', '$bg-color: red;'
     
     asset = @env['main.css']
     asset.should be_fresh(@env)
