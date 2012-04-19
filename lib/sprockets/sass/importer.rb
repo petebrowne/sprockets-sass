@@ -19,13 +19,13 @@ module Sprockets
         if path =~ GLOB
           engine_from_glob(path, base_path, options)
         else
-          engine_from_path(path, options)
+          engine_from_path(path, base_path, options)
         end
       end
       
       # @see Sass::Importers::Base#find
       def find(path, options)
-        engine_from_path(path, options)
+        engine_from_path(path, nil, options)
       end
 
       # @see Sass::Importers::Base#mtime
@@ -51,8 +51,8 @@ module Sprockets
       protected
       
       # Create a Sass::Engine from the given path.
-      def engine_from_path(path, options)
-        pathname = resolve(path) or return nil
+      def engine_from_path(path, base_path, options)
+        pathname = resolve(path, base_path) or return nil
         context.depend_on pathname
         ::Sass::Engine.new evaluate(pathname), options.merge(
           :filename => pathname.to_s,
@@ -80,19 +80,51 @@ module Sprockets
       # Finds an asset from the given path. This is where
       # we make Sprockets behave like Sass, and import partial
       # style paths.
-      def resolve(path)
+      def resolve(path, base_path)
         path = Pathname.new(path) unless path.is_a?(Pathname)
-        
-        # First look for the normal path
-        context.resolve(path) { |found| return found if context.asset_requirable?(found) }
+
+        possible_files(path, base_path).each do | file|
+          context.resolve(file) { |found| return found if context.asset_requirable?(found) }
+        end
+
+        nil
+      end
+
+      def possible_files(path, base_path)
+        base_path = Pathname.new(base_path) unless base_path.is_a?(Pathname)
+        paths = []
+
+        # Check relative path
+        unless path.to_s =~ /^\.+/
+          paths << "./#{path}"
+
+          # Maybe this file exists as a relative partial
+          unless path.basename.to_s =~ /^_/
+            paths << ("./" + path.dirname.join("_#{path.basename}").to_s)
+          end
+        end
+
+        # Check root relative path
+        unless path.to_s =~ /^\//
+          relative_path = Pathname.new(base_path.dirname).relative_path_from Pathname.new(context.root_path)
+          relative_path = relative_path.join path
+          paths << relative_path
+
+          # Logical partial
+          unless relative_path.basename.to_s =~ /^_/
+            paths << relative_path.dirname.join("_#{relative_path.basename}")
+          end
+        end
+
+        # Look for the normal path
+        paths << path
         
         # Then look for the partial-style version
         unless path.basename.to_s =~ /^_/
-          partial = path.dirname.join "_#{path.basename}"
-          context.resolve(partial) { |found| return found if context.asset_requirable?(found) }
+          paths << path.dirname.join("_#{path.basename}")
         end
-        
-        nil
+
+        paths
       end
       
       # Finds all of the assets using the given glob.
