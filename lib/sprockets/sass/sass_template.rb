@@ -15,7 +15,7 @@ module Sprockets
       
       # Add the Sass functions if they haven't already been added.
       def initialize_engine
-        super
+        super unless self.class.superclass.engine_initialized?
         
         if Sass.add_sass_functions
           require 'sprockets/sass/functions'

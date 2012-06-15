@@ -286,4 +286,22 @@ describe Sprockets::Sass do
 
     Sprockets::Sass::Compressor.new.compress(css).should == "div{color:red}\n"
   end
+
+  describe Sprockets::Sass::SassTemplate do
+    describe "initialize_engine" do
+      let(:template) { Sprockets::Sass::SassTemplate.new{} }
+
+      it "initializes super if super is uninitinalized" do
+        Tilt::SassTemplate.stub(:engine_initialized?).and_return false
+        template.should_receive(:require_template_library) # called from Tilt::SassTemplate.initialize
+        template.initialize_engine
+      end
+
+      it "does not initializes super if super is initinalized to silence warnings" do
+        Tilt::SassTemplate.stub(:engine_initialized?).and_return true
+        template.should_not_receive(:require_template_library) # called from Tilt::SassTemplate.initialize
+        template.initialize_engine
+      end
+    end
+  end
 end
