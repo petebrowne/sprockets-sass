@@ -284,12 +284,10 @@ describe Sprockets::Sass do
   it "mirrors Compass's #font_url helper" do
     @assets.file 'font_path.css.scss', %(@font-face { src: url(font-url("font.ttf", true)); })
     @assets.file 'font_url.css.scss', %(@font-face { src: font-url("font.ttf", false); })
-    @assets.file 'font_cache_buster.css.scss', %(@font-face { src: font-url("font.ttf", false, true); })
     @assets.file 'font.ttf'
     
     @env['font_path.css'].to_s.should == %(@font-face {\n  src: url("/assets/font.ttf"); }\n)
     @env['font_url.css'].to_s.should == %(@font-face {\n  src: url("/assets/font.ttf"); }\n)
-    @env['font_cache_buster.css'].to_s.should == %(@font-face {\n  src: url("/assets/font.ttf"); }\n)
   end
   
   it "mirrors Sass::Rails's #asset_path helpers" do
@@ -301,28 +299,23 @@ describe Sprockets::Sass do
     @env['asset_url.css'].to_s.should == %(body {\n  background: url("/images/icon.jpg"); }\n)
   end
 
-  it "compresses css" do
-    css = <<-CSS
-      div {
-        color: red;
-      }
-    CSS
-
+  it 'compresses css' do
+    css = "div {\n  color: red;\n}\n"
     Sprockets::Sass::Compressor.new.compress(css).should == "div{color:red}\n"
   end
 
   describe Sprockets::Sass::SassTemplate do
-    describe "initialize_engine" do
-      let(:template) { Sprockets::Sass::SassTemplate.new{} }
-
-      it "initializes super if super is uninitinalized" do
+    describe 'initialize_engine' do
+      it 'initializes super if super is uninitinalized' do
         Tilt::SassTemplate.stub(:engine_initialized?).and_return false
+        template = Sprockets::Sass::SassTemplate.new {}
         template.should_receive(:require_template_library) # called from Tilt::SassTemplate.initialize
         template.initialize_engine
       end
 
       it "does not initializes super if super is initinalized to silence warnings" do
         Tilt::SassTemplate.stub(:engine_initialized?).and_return true
+        template = Sprockets::Sass::SassTemplate.new {}
         template.should_not_receive(:require_template_library) # called from Tilt::SassTemplate.initialize
         template.initialize_engine
       end

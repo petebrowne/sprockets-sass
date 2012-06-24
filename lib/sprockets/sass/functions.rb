@@ -3,6 +3,17 @@ require 'sass'
 module Sprockets
   module Sass
     module Functions
+      # Using Sprockets::Context#asset_data_uri return a Base64-encoded `data:`
+      # URI with the contents of the asset at the specified path.
+      #
+      # === Examples
+      # 
+      #   background: asset-data-uri("image.jpg"); // background: url(data:image/jpeg;base64,...);
+      #
+      def asset_data_uri(source)
+        ::Sass::Script::String.new "url(#{sprockets_context.asset_data_uri(source.value)})"
+      end
+      
       # Using Sprockets::Helpers#asset_path, return the full path
       # for the given +source+ as a Sass String. This supports keyword
       # arguments that mirror the +options+.
@@ -80,24 +91,24 @@ module Sprockets
       #
       # === Examples
       #
-      #   background: url(font-path("font.ttf"));                // background: url("/assets/font.ttf");
-      #   background: url(font-path("font.ttf", $digest: true)); // background: url("/assets/font-27a8f1f96afd8d4c67a59eb9447f45bd.ttf");
+      #   src: url(font-path("font.ttf"));                // src: url("/assets/font.ttf");
+      #   src: url(font-path("font.ttf", $digest: true)); // src: url("/assets/font-27a8f1f96afd8d4c67a59eb9447f45bd.ttf");
       #
       def font_path(source, options = {})
         ::Sass::Script::String.new sprockets_context.font_path(source.value, map_options(options)).to_s, :string
       end
       
-      # Using Sprockets::Helpers#image_path, return the url CSS
+      # Using Sprockets::Helpers#font_path, return the url CSS
       # for the given +source+ as a Sass String. This supports keyword
       # arguments that mirror the +options+.
       #
       # === Examples
       #
-      #   background: font-url("font.ttf");                  // background: url("/assets/font.ttf");
-      #   background: font-url("image.jpg", $digest: true);  // background: url("/assets/font-27a8f1f96afd8d4c67a59eb9447f45bd.ttf");
+      #   src: font-url("font.ttf");                  // src: url("/assets/font.ttf");
+      #   src: font-url("image.jpg", $digest: true);  // src: url("/assets/font-27a8f1f96afd8d4c67a59eb9447f45bd.ttf");
       #
-      def font_url(source, options = {}, cache_buster = nil)
-        # Work with the Compass #image_url API
+      def font_url(source, options = {})
+        # Work with the Compass #font_url API
         if options.respond_to? :value
           case options.value
           when true
@@ -107,18 +118,6 @@ module Sprockets
           end
         end
         ::Sass::Script::String.new "url(#{font_path(source, options)})"
-      end
-
-      
-      # Using Sprockets::Context#asset_data_uri return a Base64-encoded `data:`
-      # URI with the contents of the asset at the specified path.
-      #
-      # === Examples
-      # 
-      #   background: asset-data-uri("image.jpg"); // background: url(data:image/jpeg;base64,...);
-      #
-      def asset_data_uri(source)
-        ::Sass::Script::String.new "url(#{sprockets_context.asset_data_uri(source.value)})"
       end
       
       protected
@@ -160,6 +159,5 @@ module Sass::Script::Functions
   declare :font_path,      [:source], :var_kwargs => true
   declare :font_url,       [:source], :var_kwargs => true
   declare :font_url,       [:source, :only_path]
-  declare :font_url,       [:source, :only_path, :cache_buster]
   declare :asset_data_uri, [:source]
 end
