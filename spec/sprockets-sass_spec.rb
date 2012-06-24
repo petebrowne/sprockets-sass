@@ -249,6 +249,19 @@ describe Sprockets::Sass do
     @env['image_path_options.css'].to_s.should =~ %r(body \{\n  background: url\("/themes/image-[0-9a-f]+.jpg"\); \}\n)
     @env['image_url_options.css'].to_s.should =~ %r(body \{\n  background: url\("/themes/image-[0-9a-f]+.jpg"\); \}\n)
   end
+
+  it 'adds the #font_path helper' do
+    @assets.file 'font_path.css.scss', %(@font-face { src: url(font-path("font.ttf")); })
+    @assets.file 'font_url.css.scss', %(@font-face { src: font-url("font.ttf"); })
+    @assets.file 'font_path_options.css.scss', %(@font-face { src: url(font-path("font.ttf", $digest: true, $prefix: "/themes")); })
+    @assets.file 'font_url_options.css.scss', %(@font-face { src: font-url("font.ttf", $digest: true, $prefix: "/themes"); })
+    @assets.file 'font.ttf'
+    
+    @env['font_path.css'].to_s.should == %(@font-face {\n  src: url("/assets/font.ttf"); }\n)
+    @env['font_url.css'].to_s.should == %(@font-face {\n  src: url("/assets/font.ttf"); }\n)
+    @env['font_path_options.css'].to_s.should =~ %r(@font-face \{\n  src: url\("/themes/font-[0-9a-f]+.ttf"\); \}\n)
+    @env['font_url_options.css'].to_s.should =~ %r(@font-face \{\n  src: url\("/themes/font-[0-9a-f]+.ttf"\); \}\n)
+  end
   
   it 'adds the #asset_data_uri helper' do
     @assets.file 'asset_data_uri.css.scss', %(body { background: asset-data-uri("image.jpg"); })
@@ -266,6 +279,17 @@ describe Sprockets::Sass do
     @env['image_path.css'].to_s.should == %(body {\n  background: url("/assets/image.jpg"); }\n)
     @env['image_url.css'].to_s.should == %(body {\n  background: url("/assets/image.jpg"); }\n)
     @env['cache_buster.css'].to_s.should == %(body {\n  background: url("/assets/image.jpg"); }\n)
+  end
+
+  it "mirrors Compass's #font_url helper" do
+    @assets.file 'font_path.css.scss', %(@font-face { src: url(font-url("font.ttf", true)); })
+    @assets.file 'font_url.css.scss', %(@font-face { src: font-url("font.ttf", false); })
+    @assets.file 'font_cache_buster.css.scss', %(@font-face { src: font-url("font.ttf", false, true); })
+    @assets.file 'font.ttf'
+    
+    @env['font_path.css'].to_s.should == %(@font-face {\n  src: url("/assets/font.ttf"); }\n)
+    @env['font_url.css'].to_s.should == %(@font-face {\n  src: url("/assets/font.ttf"); }\n)
+    @env['font_cache_buster.css'].to_s.should == %(@font-face {\n  src: url("/assets/font.ttf"); }\n)
   end
   
   it "mirrors Sass::Rails's #asset_path helpers" do
