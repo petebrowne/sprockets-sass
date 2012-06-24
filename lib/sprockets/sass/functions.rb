@@ -73,6 +73,42 @@ module Sprockets
         end
         ::Sass::Script::String.new "url(#{image_path(source, options)})"
       end
+
+      # Using Sprockets::Helpers#font_path, return the full path
+      # for the given +source+ as a Sass String. This supports keyword
+      # arguments that mirror the +options+.
+      #
+      # === Examples
+      #
+      #   background: url(font-path("font.ttf"));                // background: url("/assets/font.ttf");
+      #   background: url(font-path("font.ttf", $digest: true)); // background: url("/assets/font-27a8f1f96afd8d4c67a59eb9447f45bd.ttf");
+      #
+      def font_path(source, options = {})
+        ::Sass::Script::String.new sprockets_context.font_path(source.value, map_options(options)).to_s, :string
+      end
+      
+      # Using Sprockets::Helpers#image_path, return the url CSS
+      # for the given +source+ as a Sass String. This supports keyword
+      # arguments that mirror the +options+.
+      #
+      # === Examples
+      #
+      #   background: font-url("font.ttf");                  // background: url("/assets/font.ttf");
+      #   background: font-url("image.jpg", $digest: true);  // background: url("/assets/font-27a8f1f96afd8d4c67a59eb9447f45bd.ttf");
+      #
+      def font_url(source, options = {}, cache_buster = nil)
+        # Work with the Compass #image_url API
+        if options.respond_to? :value
+          case options.value
+          when true
+            return font_path source
+          else
+            options = {}
+          end
+        end
+        ::Sass::Script::String.new "url(#{font_path(source, options)})"
+      end
+
       
       # Using Sprockets::Context#asset_data_uri return a Base64-encoded `data:`
       # URI with the contents of the asset at the specified path.
@@ -109,7 +145,7 @@ module Sass::Script::Functions
   
   # Hack to ensure previous API declarations (by Compass or whatever)
   # don't take precedence.
-  [:asset_path, :asset_url, :image_path, :image_url, :asset_data_uri].each do |method|
+  [:asset_path, :asset_url, :image_path, :image_url, :font_path, :font_url, :asset_data_uri].each do |method|
     defined?(@signatures) && @signatures.delete(method)
   end
   
@@ -121,5 +157,9 @@ module Sass::Script::Functions
   declare :image_url,      [:source], :var_kwargs => true
   declare :image_url,      [:source, :only_path]
   declare :image_url,      [:source, :only_path, :cache_buster]
+  declare :font_path,      [:source], :var_kwargs => true
+  declare :font_url,       [:source], :var_kwargs => true
+  declare :font_url,       [:source, :only_path]
+  declare :font_url,       [:source, :only_path, :cache_buster]
   declare :asset_data_uri, [:source]
 end
