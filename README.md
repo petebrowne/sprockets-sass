@@ -90,6 +90,14 @@ button {
   color: red; }
 ```
 
+Passing Options to the Sass Engine
+----------------------------------
+
+If you would like to configure any of the Sass options, you can do so like this:
+
+```ruby
+Sprockets::Sass.options[:line_comments] = true
+```
 
 Compass Integration
 -------------------
