@@ -1,3 +1,4 @@
+require 'sprockets'
 require 'sprockets/sass/version'
 require 'sprockets/sass/sass_template'
 require 'sprockets/sass/scss_template'
