@@ -7,13 +7,13 @@ module Sprockets
       # URI with the contents of the asset at the specified path.
       #
       # === Examples
-      # 
+      #
       #   background: asset-data-uri("image.jpg"); // background: url(data:image/jpeg;base64,...);
       #
       def asset_data_uri(source)
         ::Sass::Script::String.new "url(#{sprockets_context.asset_data_uri(source.value)})"
       end
-      
+
       # Using Sprockets::Helpers#asset_path, return the full path
       # for the given +source+ as a Sass String. This supports keyword
       # arguments that mirror the +options+.
@@ -29,14 +29,14 @@ module Sprockets
           kind = options.value
           options = {}
         end
-        
+
         if kind && sprockets_context.respond_to?("#{kind}_path")
           ::Sass::Script::String.new sprockets_context.send("#{kind}_path", source.value), :string
         else
           ::Sass::Script::String.new sprockets_context.asset_path(source.value, map_options(options)).to_s, :string
         end
       end
-      
+
       # Using Sprockets::Helpers#asset_path, return the url CSS
       # for the given +source+ as a Sass String. This supports keyword
       # arguments that mirror the +options+.
@@ -49,7 +49,7 @@ module Sprockets
       def asset_url(source, options = {})
         ::Sass::Script::String.new "url(#{asset_path(source, options)})"
       end
-      
+
       # Using Sprockets::Helpers#image_path, return the full path
       # for the given +source+ as a Sass String. This supports keyword
       # arguments that mirror the +options+.
@@ -62,7 +62,7 @@ module Sprockets
       def image_path(source, options = {})
         ::Sass::Script::String.new sprockets_context.image_path(source.value, map_options(options)).to_s, :string
       end
-      
+
       # Using Sprockets::Helpers#image_path, return the url CSS
       # for the given +source+ as a Sass String. This supports keyword
       # arguments that mirror the +options+.
@@ -97,7 +97,7 @@ module Sprockets
       def font_path(source, options = {})
         ::Sass::Script::String.new sprockets_context.font_path(source.value, map_options(options)).to_s, :string
       end
-      
+
       # Using Sprockets::Helpers#font_path, return the url CSS
       # for the given +source+ as a Sass String. This supports keyword
       # arguments that mirror the +options+.
@@ -119,15 +119,15 @@ module Sprockets
         end
         ::Sass::Script::String.new "url(#{font_path(source, options)})"
       end
-      
+
       protected
-      
+
       # Returns a reference to the Sprocket's context through
       # the importer.
       def sprockets_context # :nodoc:
-        options[:importer].context
+        options[:custom][:sprockets_context]
       end
-            
+
       # Returns an options hash where the keys are symbolized
       # and the values are unwrapped Sass literals.
       def map_options(options = {}) # :nodoc:
@@ -141,13 +141,13 @@ end
 
 module Sass::Script::Functions
   include Sprockets::Sass::Functions
-  
+
   # Hack to ensure previous API declarations (by Compass or whatever)
   # don't take precedence.
   [:asset_path, :asset_url, :image_path, :image_url, :font_path, :font_url, :asset_data_uri].each do |method|
     defined?(@signatures) && @signatures.delete(method)
   end
-  
+
   declare :asset_path,     [:source], :var_kwargs => true
   declare :asset_path,     [:source, :kind]
   declare :asset_url,      [:source], :var_kwargs => true
