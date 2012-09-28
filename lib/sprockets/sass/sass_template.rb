@@ -8,18 +8,31 @@ module Sprockets
       # A reference to the current Sprockets context
       attr_reader :context
 
-      # Templates are initialized once the functions are added.
-      def self.engine_initialized?
-        super && (!Sass.add_sass_functions || defined?(Functions))
+      # Determines if the Sass functions have been initialized.
+      # They can be 'initialized' without actually being added.
+      @sass_functions_initialized = false
+      class << self
+        attr_accessor :sass_functions_initialized
+        alias :sass_functions_initialized? :sass_functions_initialized
+
+        # Templates are initialized once the functions are added.
+        def engine_initialized?
+          super && sass_functions_initialized?
+        end
       end
 
       # Add the Sass functions if they haven't already been added.
       def initialize_engine
         super unless self.class.superclass.engine_initialized?
 
-        if Sass.add_sass_functions
-          require 'sprockets/sass/functions'
+        if Sass.add_sass_functions != false
+          begin
+            require 'sprockets/helpers'
+            require 'sprockets/sass/functions'
+          rescue LoadError; end
         end
+
+        self.class.sass_functions_initialized = true
       end
 
       # Define the expected syntax for the template

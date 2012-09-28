@@ -320,11 +320,28 @@ describe Sprockets::Sass do
         template.initialize_engine
       end
 
-      it "does not initializes super if super is initinalized to silence warnings" do
+      it 'does not initializes super if super is initinalized to silence warnings' do
         Tilt::SassTemplate.stub(:engine_initialized?).and_return true
         template = Sprockets::Sass::SassTemplate.new {}
         template.should_not_receive(:require_template_library) # called from Tilt::SassTemplate.initialize
         template.initialize_engine
+      end
+
+      it 'does not add Sass functions if sprockets-helpers is not available' do
+        template = Sprockets::Sass::SassTemplate.new {}
+        template.should_receive(:require).with('sprockets/helpers').and_raise LoadError
+        template.should_not_receive(:require).with 'sprockets/sass/functions'
+        template.initialize_engine
+        Sprockets::Sass::SassTemplate.engine_initialized?.should be_true
+      end
+
+      it 'does not add Sass functions if add_sass_functions is false' do
+        Sprockets::Sass.add_sass_functions = false
+        template = Sprockets::Sass::SassTemplate.new {}
+        template.should_not_receive(:require).with 'sprockets/sass/functions'
+        template.initialize_engine
+        Sprockets::Sass::SassTemplate.engine_initialized?.should be_true
+        Sprockets::Sass.add_sass_functions = true
       end
     end
   end
