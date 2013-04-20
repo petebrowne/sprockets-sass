@@ -2,7 +2,6 @@
 
 source :rubygems
 
-gem "sprockets", "~> 2.1.0"
-gem "sass", "~> 3.1.0"
+gem "sprockets", "~> 2.4.0"
 
 gemspec :path=>"../"
