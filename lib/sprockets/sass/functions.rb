@@ -69,8 +69,8 @@ module Sprockets
       #
       # === Examples
       #
-      #   background: asset-url("image.jpg");                // background: url("/assets/image.jpg");
-      #   background: asset-url("image.jpg", $digest: true); // background: url("/assets/image-27a8f1f96afd8d4c67a59eb9447f45bd.jpg");
+      #   background: image-url("image.jpg");                // background: url("/assets/image.jpg");
+      #   background: image-url("image.jpg", $digest: true); // background: url("/assets/image-27a8f1f96afd8d4c67a59eb9447f45bd.jpg");
       #
       def image_url(source, options = {}, cache_buster = nil)
         # Work with the Compass #image_url API
