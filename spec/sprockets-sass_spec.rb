@@ -86,6 +86,14 @@ describe Sprockets::Sass do
     expect(asset.to_s).to eql("body {\n  background-color: red;\n  color: blue; }\n")
   end
 
+  it 'imports deeply nested relative partials' do
+    @assets.file 'package-prime/stylesheets/main.scss', %(@import "package-dep/src/stylesheets/variables";\nbody { background-color: $background-color; color: $color; })
+    @assets.file 'package-dep/src/stylesheets/_variables.scss', %(@import "./colors";\n$background-color: red;)
+    @assets.file 'package-dep/src/stylesheets/_colors.scss', '$color: blue;'
+    asset = @env['package-prime/stylesheets/main.scss']
+    expect(asset.to_s).to eql("body {\n  background-color: red;\n  color: blue; }\n")
+  end
+
   it 'imports relative files without preceding ./' do
     @assets.file 'folder/main.css.scss', %(@import "dep-1";\n@import "subfolder/dep-2";\nbody { background-color: $background-color; color: $color; })
     @assets.file 'folder/dep-1.css.scss', '$background-color: red;'
