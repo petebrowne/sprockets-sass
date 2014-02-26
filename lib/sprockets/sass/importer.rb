@@ -133,7 +133,8 @@ module Sprockets
       # Sprockets to process the file, but we remove any Sass processors
       # because we need to let the Sass::Engine handle that.
       def evaluate(path)
-        processors = context.environment.attributes_for(path).processors.dup
+        attributes = context.environment.attributes_for(path)
+        processors = context.environment.preprocessors(attributes.content_type) + attributes.engines.reverse
         processors.delete_if { |processor| processor < Tilt::SassTemplate }
         context.evaluate(path, :processors => processors)
       end

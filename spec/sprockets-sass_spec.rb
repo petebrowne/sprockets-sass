@@ -2,10 +2,13 @@ require 'spec_helper'
 
 describe Sprockets::Sass do
   before :each do
-    @root   = create_construct
+    @root = create_construct
     @assets = @root.directory 'assets'
-    @env    = Sprockets::Environment.new @root.to_s
+    @env = Sprockets::Environment.new @root.to_s
     @env.append_path @assets.to_s
+    @env.register_postprocessor 'text/css', :fail_postprocessor do |context, data|
+      data.gsub /@import/, 'fail engine'
+    end
   end
 
   after :each do
