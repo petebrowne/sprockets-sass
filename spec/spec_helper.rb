@@ -2,7 +2,7 @@ require 'sprockets'
 require 'sprockets-sass'
 require 'sprockets-helpers'
 require 'compass'
-require 'construct'
+require 'test_construct'
 
 Compass.configuration do |compass|
   compass.line_comments = false
@@ -14,5 +14,5 @@ end
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 
 RSpec.configure do |config|
-  config.include Construct::Helpers
+  config.include TestConstruct::Helpers
 end

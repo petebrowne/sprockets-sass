@@ -4,3 +4,5 @@ Gemfile.lock
 gemfiles/*.lock
 pkg/*
 .sass-cache
+.rspec
+.ruby-version

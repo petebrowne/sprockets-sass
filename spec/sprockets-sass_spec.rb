@@ -231,7 +231,11 @@ describe Sprockets::Sass do
     @assets.file 'main.css.scss', %($color: blue;\nbody { color: $color; })
 
     @env['main.css'].to_s
-    sass_cache = cache.keys.detect { |key| key =~ /main\.css\.scss/ }
+    if Sass.version[:minor] > 2
+      sass_cache = cache.detect.detect { |key, value| value['pathname'] =~ /main\.css\.scss/ }
+    else
+      sass_cache = cache.keys.detect { |key| key =~ /main\.css\.scss/ }
+    end
     expect(sass_cache).to_not be_nil
   end
 
