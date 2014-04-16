@@ -6,14 +6,6 @@ module Sprockets
     class Importer < ::Sass::Importers::Base
       GLOB = /\*|\[.+\]/
 
-      # Reference to the Sprockets context
-      attr_reader :context
-
-      #
-      def initialize(context)
-        @context = context
-      end
-
       # @see Sass::Importers::Base#find_relative
       def find_relative(path, base_path, options)
         if path =~ GLOB
@@ -52,9 +44,10 @@ module Sprockets
 
       # Create a Sass::Engine from the given path.
       def engine_from_path(path, base_path, options)
-        pathname = resolve(path, base_path) or return nil
+        context = options[:custom][:sprockets_context]
+        pathname = resolve(context, path, base_path) or return nil
         context.depend_on pathname
-        ::Sass::Engine.new evaluate(pathname), options.merge(
+        ::Sass::Engine.new evaluate(context, pathname), options.merge(
           :filename => pathname.to_s,
           :syntax   => syntax(pathname),
           :importer => self
@@ -64,7 +57,8 @@ module Sprockets
       # Create a Sass::Engine that will handle importing
       # a glob of files.
       def engine_from_glob(glob, base_path, options)
-        imports = resolve_glob(glob, base_path).inject('') do |imports, path|
+        context = options[:custom][:sprockets_context]
+        imports = resolve_glob(context, glob, base_path).inject('') do |imports, path|
           context.depend_on path
           relative_path = path.relative_path_from Pathname.new(context.root_path)
           imports << %(@import "#{relative_path}";\n)
@@ -80,8 +74,8 @@ module Sprockets
       # Finds an asset from the given path. This is where
       # we make Sprockets behave like Sass, and import partial
       # style paths.
-      def resolve(path, base_path)
-        possible_files(path, base_path).each do |file|
+      def resolve(context, path, base_path)
+        possible_files(context, path, base_path).each do |file|
           context.resolve(file) { |found| return found if context.asset_requirable?(found) }
         end
 
@@ -89,7 +83,7 @@ module Sprockets
       end
 
       # Finds all of the assets using the given glob.
-      def resolve_glob(glob, base_path)
+      def resolve_glob(context, glob, base_path)
         base_path      = Pathname.new(base_path)
         path_with_glob = base_path.dirname.join(glob).to_s
 
@@ -100,7 +94,7 @@ module Sprockets
 
       # Returns all of the possible paths (including partial variations)
       # to attempt to resolve with the given path.
-      def possible_files(path, base_path)
+      def possible_files(context, path, base_path)
         path      = Pathname.new(path)
         base_path = Pathname.new(base_path).dirname
         root_path = Pathname.new(context.root_path)
@@ -132,7 +126,7 @@ module Sprockets
       # Returns the string to be passed to the Sass engine. We use
       # Sprockets to process the file, but we remove any Sass processors
       # because we need to let the Sass::Engine handle that.
-      def evaluate(path)
+      def evaluate(context, path)
         attributes = context.environment.attributes_for(path)
         processors = context.environment.preprocessors(attributes.content_type) + attributes.engines.reverse
         processors.delete_if { |processor| processor < Tilt::SassTemplate }

@@ -71,11 +71,6 @@ module Sprockets
         end
       end
 
-      # A reference to the custom Sass importer, `Sprockets::Sass::Importer`.
-      def importer
-        Importer.new context
-      end
-
       # Assemble the options for the `Sass::Engine`
       def sass_options
         merge_sass_options(default_sass_options, options).merge(
@@ -83,7 +78,7 @@ module Sprockets
           :line        => line,
           :syntax      => syntax,
           :cache_store => cache_store,
-          :importer    => importer,
+          :importer    => Importer.new,
           :custom      => { :sprockets_context => context }
         )
       end
