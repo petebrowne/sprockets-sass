@@ -60,7 +60,7 @@ module Sprockets
         context = options[:custom][:sprockets_context]
         imports = resolve_glob(context, glob, base_path).inject('') do |imports, path|
           context.depend_on path
-          relative_path = path.relative_path_from Pathname.new(context.root_path)
+          relative_path = path.relative_path_from Pathname.new(base_path).dirname
           imports << %(@import "#{relative_path}";\n)
         end
         return nil if imports.empty?
@@ -97,7 +97,12 @@ module Sprockets
       def possible_files(context, path, base_path)
         path      = Pathname.new(path)
         base_path = Pathname.new(base_path).dirname
-        root_path = Pathname.new(context.root_path)
+
+        # Find base_path's root
+        root_path = context.environment.paths.map{|p| Pathname.new p}.select do |env_root_path|
+          base_path.to_s.start_with?( env_root_path.to_s )
+        end.first || context.root_path
+
         paths     = [ path, partialize_path(path) ]
 
         # Add the relative path from the root, if necessary
