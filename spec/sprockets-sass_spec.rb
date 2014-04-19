@@ -145,6 +145,30 @@ describe Sprockets::Sass do
     expect(asset.to_s).to eql("body {\n  color: blue; }\n")
   end
 
+  it 'imports nested partials with relative path from the assets load path' do
+    vendor = @root.directory 'vendor'
+    @env.append_path vendor.to_s
+
+    @assets.file 'folder/main.css.scss', %(@import "dep";\nbody { color: $color; })
+    vendor.file 'dep.css.scss', '@import "folder1/dep1";'
+    vendor.file 'folder1/_dep1.scss', '@import "folder2/dep2";'
+    vendor.file 'folder1/folder2/_dep2.scss', '$color: blue;'
+    asset = @env['folder/main.css']
+    expect(asset.to_s).to eql("body {\n  color: blue; }\n")
+  end
+
+  it 'imports nested partials with relative path and glob from the assets load path' do
+    vendor = @root.directory 'vendor'
+    @env.append_path vendor.to_s
+
+    @assets.file 'folder/main.css.scss', %(@import "dep";\nbody { color: $color; })
+    vendor.file 'dep.css.scss', '@import "folder1/dep1";'
+    vendor.file 'folder1/_dep1.scss', '@import "folder2/*";'
+    vendor.file 'folder1/folder2/_dep2.scss', '$color: blue;'
+    asset = @env['folder/main.css']
+    expect(asset.to_s).to eql("body {\n  color: blue; }\n")
+  end
+
   it 'allows global Sass configuration' do
     Sprockets::Sass.options[:style] = :compact
     @assets.file 'main.css.scss', "body {\n  color: blue;\n}"
