@@ -97,18 +97,18 @@ module Sprockets
       def possible_files(context, path, base_path)
         path      = Pathname.new(path)
         base_path = Pathname.new(base_path).dirname
+        paths     = [ path, partialize_path(path) ]
 
         # Find base_path's root
-        root_path = context.environment.paths.map{|p| Pathname.new p}.select do |env_root_path|
-          base_path.to_s.start_with?( env_root_path.to_s )
-        end.first || context.root_path
-
-        paths     = [ path, partialize_path(path) ]
+        env_root_paths = context.environment.paths.map {|p| Pathname.new(p) }
+        root_path = env_root_paths.detect do |env_root_path|
+          base_path.to_s.start_with?(env_root_path.to_s)
+        end
+        root_path ||= context.root_path
 
         # Add the relative path from the root, if necessary
         if path.relative? && base_path != root_path
           relative_path = base_path.relative_path_from(root_path).join path
-
           paths.unshift(relative_path, partialize_path(relative_path))
         end
 
