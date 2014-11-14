@@ -6,3 +6,7 @@ pkg/*
 .sass-cache
 .rspec
 .ruby-version
+
+# Ignore IntelliJ IDEA project files.
+*.iml
+/.idea/
