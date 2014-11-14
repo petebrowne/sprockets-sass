@@ -372,7 +372,7 @@ describe Sprockets::Sass do
         template.should_receive(:require).with('sprockets/helpers').and_raise LoadError
         template.should_not_receive(:require).with 'sprockets/sass/functions'
         template.initialize_engine
-        expect(Sprockets::Sass::SassTemplate.engine_initialized?).to be_true
+        expect(Sprockets::Sass::SassTemplate.engine_initialized?).to be_truthy
       end
 
       it 'does not add Sass functions if add_sass_functions is false' do
@@ -380,7 +380,7 @@ describe Sprockets::Sass do
         template = Sprockets::Sass::SassTemplate.new {}
         template.should_not_receive(:require).with 'sprockets/sass/functions'
         template.initialize_engine
-        expect(Sprockets::Sass::SassTemplate.engine_initialized?).to be_true
+        expect(Sprockets::Sass::SassTemplate.engine_initialized?).to be_truthy
         Sprockets::Sass.add_sass_functions = true
       end
     end
