@@ -81,7 +81,7 @@ module Sprockets
         else
           importer = Importer.new
         end
-        
+
         merge_sass_options(default_sass_options, options).merge(
           :filename    => eval_file,
           :line        => line,
