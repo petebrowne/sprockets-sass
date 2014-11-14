@@ -73,12 +73,21 @@ module Sprockets
 
       # Assemble the options for the `Sass::Engine`
       def sass_options
+        # Allow the use of custom SASS importers, making sure the
+        # custom importer is a `Sprockets::Sass::Importer`
+        if default_sass_options.has_key?(:importer) &&
+           default_sass_options[:importer].is_a?(Importer)
+          importer = default_sass_options[:importer]
+        else
+          importer = Importer.new
+        end
+
         merge_sass_options(default_sass_options, options).merge(
           :filename    => eval_file,
           :line        => line,
           :syntax      => syntax,
           :cache_store => cache_store,
-          :importer    => Importer.new,
+          :importer    => importer,
           :custom      => { :sprockets_context => context }
         )
       end
