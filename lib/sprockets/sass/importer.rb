@@ -104,7 +104,7 @@ module Sprockets
         root_path = env_root_paths.detect do |env_root_path|
           base_path.to_s.start_with?(env_root_path.to_s)
         end
-        root_path ||= context.root_path
+        root_path ||= Pathname.new(context.root_path)
 
         # Add the relative path from the root, if necessary
         if path.relative? && base_path != root_path
