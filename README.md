@@ -192,6 +192,34 @@ background: asset-data-uri("image.jpg"); // background: url(data:image/jpeg;base
 ```
 
 
+Development
+-----------
+
+Install dependencies using bundler:
+
+``` bash
+bundle install
+```
+
+Run tests:
+
+``` bash
+rake
+```
+
+sprocket-sass is tested against numerous versions of Sass, Compoass, and Sprockets using [appraisal](https://github.com/thoughtbot/appraisal). First install all the gems:
+
+``` bash
+rake appraisal:install
+```
+
+Then run the entire test suite:
+
+``` bash
+rake appraisal
+```
+
+
 Copyright
 ---------
 
