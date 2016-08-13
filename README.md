@@ -5,11 +5,11 @@ sprockets-sass
 
 When using Sprockets 2.x with Sass you will eventually run into a pretty big issue. `//= require` directives will not allow Sass mixins, variables, etc. to be shared between files. So you'll try to use `@import`, and that'll also blow up in your face. `sprockets-sass` fixes all of this by creating a Sass::Importer that is Sprockets aware.
 
-_Note: This works in Rails 3.1, thanks to the [sass-rails gem](http://github.com/rails/sass-rails). But if you want to use Sprockets and Sass anywhere else, like Sinatra, use `sprockets-sass`._
+**Note: This works in Rails 3.1, thanks to the [sass-rails gem](http://github.com/rails/sass-rails). But if you want to use Sprockets and Sass anywhere else, like Sinatra, use `sprockets-sass`**
 
 ### Features
 
-* Imports Sass _partials_ (filenames prepended with "_").
+* Imports Sass ```_partials_``` (filenames prepended with ```_```).
 * Import paths work exactly like `require` directives.
 * Imports either Sass syntax, or just regular CSS files.
 * Imported files are preprocessed by Sprockets, so `.css.scss.erb` files can be imported.
@@ -47,6 +47,24 @@ map "/" do
   run YourRackApp
 end
 ```
+
+Sprockets Sass provides also a compressor for ```.css``` files
+
+You can use it with Sprockets 2.x by doing this:
+
+```ruby
+  environment = Sprockets::Environment.new
+  environment.css_compressor = Sprockets::Sass::Compressor
+```
+
+Or with Sprockets 3.x by doing this:
+
+```ruby
+  environment = Sprockets::Environment.new
+  environment.css_compressor = :sprockets_sass
+```
+
+Or with Rails by setting ```css_compressor``` in the ```config/application.rb``` file to one of the values listed above depending on your version of Sprockets
 
 Now `@import` works essentially just like a `require` directive, but with one essential bonus:
 Sass mixins, variables, etc. work as expected.
@@ -158,13 +176,13 @@ require "sass"
 map "/assets" do
   environment = Sprockets::Environment.new
   environment.append_path "assets/stylesheets"
-  
+
   Sprockets::Helpers.configure do |config|
     config.environment = environment
     config.prefix      = "/assets"
     config.digest      = false
   end
-  
+
   run environment
 end
 
@@ -201,24 +219,13 @@ Install dependencies using bundler:
 bundle install
 ```
 
+sprocket-sass is tested against numerous versions of Sass, Compoass, and Sprockets using [appraisal](https://github.com/thoughtbot/appraisal).
+This will install all the gems and run the tests against all versions
 Run tests:
 
 ``` bash
-rake
+bundle exec rake
 ```
-
-sprocket-sass is tested against numerous versions of Sass, Compoass, and Sprockets using [appraisal](https://github.com/thoughtbot/appraisal). First install all the gems:
-
-``` bash
-rake appraisal:install
-```
-
-Then run the entire test suite:
-
-``` bash
-rake appraisal
-```
-
 
 Copyright
 ---------

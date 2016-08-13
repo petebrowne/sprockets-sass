@@ -1,7 +1,7 @@
 module Sprockets
   module Sass
 
-    class DummyImporter < Importer
+    class DummyImporter < Sprockets::Sass::Utils.get_class_by_version("Importer")
       attr_accessor :has_been_used
 
       def initialize

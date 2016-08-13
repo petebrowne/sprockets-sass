@@ -1,16 +1,20 @@
-RSpec::Matchers.define :be_fresh do |env|
+RSpec::Matchers.define :be_fresh do |env, old_asset|
   match do |actual|
-    if actual.method(:fresh?).arity == 1
-      actual.fresh?(env)
+    if actual.respond_to?(:fresh?)
+      if actual.method(:fresh?).arity == 1
+        actual.fresh?(env)
+      else
+        actual.fresh?
+      end
     else
-      actual.fresh?
+      actual.eql?(old_asset)
     end
   end
-  
+
   failure_message_for_should do |env|
     'expected asset to be fresh'
   end
-  
+
   failure_message_for_should_not do |env|
     'expected asset to be stale'
   end
