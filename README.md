@@ -54,7 +54,7 @@ You can use it with Sprockets 2.x by doing this:
 
 ```ruby
   environment = Sprockets::Environment.new
-  environment.css_compressor = Sprockets::Sass::Compressor
+  environment.css_compressor = Sprockets::Sass::V2::Compressor
 ```
 
 Or with Sprockets 3.x by doing this:
