@@ -1,0 +1,12 @@
+---
+Attribute:
+  enabled: false
+TooManyInstanceVariables:
+  enabled: false
+TooManyMethods:
+  enabled: false
+UtilityFunction:
+  enabled: false
+exclude_paths:
+  - examples
+  - spec

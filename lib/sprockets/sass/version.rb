@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Sprockets
   module Sass
     VERSION = '1.3.1'
