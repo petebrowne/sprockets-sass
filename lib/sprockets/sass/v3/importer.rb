@@ -6,7 +6,7 @@ module Sprockets
       # class used for importing files from SCCS and SASS files
       class Importer < Sprockets::Sass::V2::Importer
         GLOB = /\*|\[.+\]/
-        
+
       protected
 
         def resolve_path_with_load_paths(context, path, root_path, file)
@@ -124,7 +124,7 @@ module Sprockets
         def handle_complex_process_result(context, result, processors)
           data = result[:data] if result.key?(:data)
           context.metadata.merge!(result)
-          context.metadata.delete(:data)
+          # context.metadata.delete(:data)
           if result.key?(:required)
             result[:required].each do |file|
               file_asset = context.environment.load(file)
