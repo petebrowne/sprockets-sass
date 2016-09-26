@@ -125,7 +125,7 @@ module Sprockets
         def handle_complex_process_result(context, result, processors)
           data = result[:data] if result.key?(:data)
           context.metadata.merge!(result)
-          # context.metadata.delete(:data)
+          context.metadata.delete(:data)
           if result.key?(:required)
             result[:required].each do |file|
               file_asset = context.environment.load(file)
