@@ -85,6 +85,10 @@ module Sprockets
           end
         end
 
+        def get_engines_from_attributes(_attributes)
+          []
+        end
+
         def call_processor_input(processor, context, input, processors)
           if processor.respond_to?(:processors)
             processor.processors = filter_all_processors(processor.processors)
