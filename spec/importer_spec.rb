@@ -24,7 +24,7 @@ describe Sprockets::Sass do
     @root.destroy!
   end
 
-  if (3..4).include?(Sprockets::Sass::Utils.version_of_sprockets)
+  if (3...4).include?(Sprockets::Sass::Utils.version_of_sprockets)
     it 'allow calls the get engines from attributes with proper arguments' do
       expect_any_instance_of(@importer_class).to receive(:get_engines_from_attributes).with(anything, [@dep_path.to_s.gsub('.css.xyz', ''), "text/css", [".xyz"], nil]).at_least(:once).and_call_original
       asset = @env['main.css']
