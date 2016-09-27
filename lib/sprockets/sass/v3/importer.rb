@@ -189,7 +189,12 @@ module Sprockets
           engines = get_engines_from_attributes(context, attributes)
           preprocessors = get_context_preprocessors(context, content_type)
           additional_transformers = get_context_transformers(context, content_type, path)
-          engines.reverse + additional_transformers.reverse + preprocessors
+          postprocessors = get_context_postprocessors(context, content_type)
+          engines.reverse + preprocessors + additional_transformers.reverse  + postprocessors
+        end
+
+        def get_context_postprocessors(context, content_type)
+          context.environment.postprocessors[content_type].map { |a| a.class == Class ? a : a.class  }
         end
 
         def filter_all_processors(processors)

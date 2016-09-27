@@ -85,7 +85,7 @@ module Sprockets
           end
         end
 
-        def get_engines_from_attributes(_attributes)
+        def get_engines_from_attributes(_context, _attributes)
           []
         end
 

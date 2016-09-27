@@ -396,7 +396,7 @@ describe Sprockets::Sass do
       expect(res).to  eql("div{color:red}\n")
     end
   end
-  
+
 
   describe Sprockets::Sass::SassTemplate do
 
@@ -410,15 +410,15 @@ describe Sprockets::Sass do
       it 'does add Sass functions if sprockets-helpers is not available' do
         Sprockets::Sass::SassTemplate.sass_functions_initialized = false
         Sprockets::Sass.add_sass_functions = true
-        Sprockets::Sass::SassTemplate.any_instance.should_receive(:require).with('sprockets/helpers').and_raise LoadError
-        Sprockets::Sass::SassTemplate.any_instance.should_not_receive(:require).with 'sprockets/sass/functions'
+        expect_any_instance_of(Sprockets::Sass::SassTemplate).to receive(:require).with('sprockets/helpers').and_raise LoadError
+        expect_any_instance_of(Sprockets::Sass::SassTemplate).to_not receive(:require).with 'sprockets/sass/functions'
         template
         expect(Sprockets::Sass::SassTemplate.engine_initialized?).to be_falsy
       end
 
       it 'does not add Sass functions if add_sass_functions is false' do
         Sprockets::Sass.add_sass_functions = false
-        template.should_not_receive(:require).with 'sprockets/sass/functions'
+        expect(template).to_not receive(:require).with 'sprockets/sass/functions'
         template.initialize_engine
         expect(Sprockets::Sass::SassTemplate.engine_initialized?).to be_falsy
         Sprockets::Sass.add_sass_functions = true
