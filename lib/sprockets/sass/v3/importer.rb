@@ -6,8 +6,8 @@ module Sprockets
       # class used for importing files from SCCS and SASS files
       class Importer < Sprockets::Sass::V2::Importer
         GLOB = /\*|\[.+\]/
-        
-      protected
+
+        protected
 
         def resolve_path_with_load_paths(context, path, root_path, file)
           context.resolve(file.to_s, load_paths: context.environment.paths, base_path: root_path, accept: syntax_mime_type(path))
@@ -43,10 +43,10 @@ module Sprockets
 
         def asset_requirable?(context, path)
           pathname = begin
-                       context.resolve(path)
-                     rescue
-                       nil
-                     end
+            context.resolve(path)
+          rescue
+            nil
+          end
           return false if pathname.nil?
           stat = stat_of_pathname(context, pathname, path)
           return false unless stat && stat.file?
@@ -118,6 +118,7 @@ module Sprockets
           metadata = (input[:metadata] || {}).dup
           metadata[:data] = input[:data]
           result = processor.call(input)
+          processors.delete(processor)
           handle_process_result(context, result, processors, metadata)
         end
 
@@ -137,14 +138,14 @@ module Sprockets
         def handle_process_result(context, result, processors, metadata)
           data = nil
           case result
-            when NilClass
-              data = metadata[:data]
-            when Hash
-              data = handle_complex_process_result(context, result, processors)
-            when String
-              data = result
-            else
-              raise Error, "invalid processor return type: #{result.class}"
+          when NilClass
+            data = metadata[:data]
+          when Hash
+            data = handle_complex_process_result(context, result, processors)
+          when String
+            data = result
+          else
+            raise Error, "invalid processor return type: #{result.class}"
           end
           data
         end
@@ -156,7 +157,6 @@ module Sprockets
           path = check_path_before_process(context, path)
           data = Sprockets::Sass::Utils.read_template_file(path.to_s)
           input = build_input_for_process(context, path, data)
-
           processors.each do |processor|
             data = call_processor_input(processor, context, input, processors)
           end
@@ -174,15 +174,27 @@ module Sprockets
           additional_transformers.is_a?(Array) ? additional_transformers : [additional_transformers]
         end
 
-        def get_engines_from_attributes(_attributes)
-          []
+        def get_engines_from_attributes(context, attributes)
+          engines = []
+          attributes[2].each do |extension|
+            ext = ::Sprockets::Utils.normalize_extension(extension)
+            ext_engines = context.environment.engines[ext]
+            ext_engines = ext_engines.is_a?(Array) ? ext_engines : [ext_engines]
+            engines.concat(ext_engines)
+          end
+          engines
         end
 
         def get_all_processors_for_evaluate(context, content_type, attributes, path)
-          engines = get_engines_from_attributes(attributes)
+          engines = get_engines_from_attributes(context, attributes)
           preprocessors = get_context_preprocessors(context, content_type)
           additional_transformers = get_context_transformers(context, content_type, path)
-          additional_transformers.reverse + preprocessors + engines.reverse
+          postprocessors = get_context_postprocessors(context, content_type)
+          engines.reverse + preprocessors + additional_transformers.reverse  + postprocessors
+        end
+
+        def get_context_postprocessors(context, content_type)
+          context.environment.postprocessors[content_type].map { |a| a.class == Class ? a : a.class  }
         end
 
         def filter_all_processors(processors)

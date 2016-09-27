@@ -171,12 +171,12 @@ module Sprockets
           []
         end
 
-        def get_engines_from_attributes(attributes)
+        def get_engines_from_attributes(context, attributes)
           attributes.engines
         end
 
         def get_all_processors_for_evaluate(context, content_type, attributes, path)
-          engines = get_engines_from_attributes(attributes)
+          engines = get_engines_from_attributes(context, attributes)
           preprocessors = get_context_preprocessors(context, content_type)
           additional_transformers = get_context_transformers(context, content_type, path)
           additional_transformers.reverse + preprocessors + engines.reverse
