@@ -19,8 +19,8 @@ describe Sprockets::Sass do
     @assets.file 'main.css.scss', %(@import "dep")
     @dep_path = @assets.file 'dep.css.xyz', "$color: blue;\nbody { color: $color; }"
   end
-  after :each do
 
+  after :each do
     @root.destroy!
   end
 
